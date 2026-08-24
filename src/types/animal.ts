@@ -1,0 +1,30 @@
+export interface AnimalApiResponse {
+  desertionNo: string
+  happenDt: string | null
+  happenPlace: string | null
+  upKindCd: string | null
+  upKindNm: string | null
+  kindCd: string | null
+  kindNm: string | null
+  kindFullNm: string | null
+  colorCd: string | null
+  age: string | null
+  weight: string | null
+  noticeNo: string | null
+  noticeSdt: string | null
+  noticeEdt: string | null
+  popfile1: string | null
+  popfile2: string | null
+  processState: string | null
+  sexCd: string | null
+  neuterYn: string | null
+  specialMark: string | null
+  careRegNo: string | null
+  careNm: string | null
+  careTel: string | null
+  careAddr: string | null
+  orgNm: string | null
+  sourceUpdTm: string | null
+  updatedAt: string | null
+  createdAt: string | null
+}

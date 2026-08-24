@@ -1,0 +1,93 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+# CodeRabbit 설정 파일입니다. PR 리뷰 규칙과 리뷰 대상 경로를 정의합니다.
+language: 'ko-KR'
+
+# 리뷰 톤과 기본 원칙을 정의합니다.
+tone_instructions: |
+  한국어로 간결하고 실용적인 코드 리뷰를 제공하세요.
+  보안, 성능, 유지보수성, 협업 가독성을 우선적으로 확인합니다.
+  팀의 기본 규칙은 README와 PR 템플릿을 우선으로 따릅니다.
+
+# 리뷰 스타일과 출력 형식을 설정합니다.
+reviews:
+  profile: 'chill' # 리뷰 스타일: chill(관대), assertive(엄격)
+  request_changes_workflow: false # 변경 요청 흐름은 기본적으로 비활성화
+  high_level_summary: true # PR 요약 생성
+  high_level_summary_in_walkthrough: true # 워크스루에 요약 포함
+  review_status: true # 리뷰 상태 표시
+  poem: false # 시 생성 비활성화
+  collapse_walkthrough: true # 워크스루 접기
+  changed_files_summary: true # 변경 파일 요약
+  suggested_labels: true # 라벨 자동 제안
+
+  # 리뷰 대상 경로를 제한합니다.
+  path_filters:
+    - 'src/**' # 앱 소스 코드
+    - 'public/**' # 정적 자산
+    - 'package.json' # 의존성/스크립트 정의
+    - 'pnpm-lock.yaml' # 패키지 잠금 파일
+    - 'vite.config.*' # Vite 설정
+    - 'tsconfig*.json' # TypeScript 설정
+    - 'eslint.config.*' # ESLint 설정
+    - 'prettier.config.*' # Prettier 설정
+    - '.prettierrc*' # Prettier 추가 설정
+    - '.github/**' # GitHub 템플릿/워크플로우
+    - 'README.md' # 프로젝트 문서
+    - 'docs/**' # 문서 디렉터리
+    - '!.coderabbit.yaml' # 이 설정 파일은 제외
+    - '!node_modules/**' # 의존성 폴더 제외
+    - '!dist/**' # 빌드 결과물 제외
+    - '!coverage/**' # 테스트 커버리지 결과 제외
+
+  # 파일별 리뷰 지침입니다.
+  path_instructions:
+    - path: '**/*.{ts,tsx,js,jsx}' # React/TypeScript 파일
+      instructions: |
+        React/TypeScript 코드 리뷰 시:
+        - 타입 안정성과 가독성을 우선 확인합니다.
+        - 불필요한 렌더링, 중복 로직, 예외 처리 누락을 확인합니다.
+        - 로딩/에러 상태와 사용자 경험 영향을 점검합니다.
+        - 컴포넌트는 재사용성과 책임 분리를 고려합니다.
+
+    - path: '**/*.{css,scss,md}' # 스타일 및 문서 파일
+      instructions: |
+        스타일과 문서 변경은 일관성과 유지보수성을 확인합니다.
+        문서는 팀 규칙과 실제 구현이 맞는지 검토합니다.
+
+    - path: '.github/**' # GitHub 템플릿/워크플로우
+      instructions: |
+        워크플로우와 템플릿 변경은 팀 협업 흐름에 문제가 없는지 확인합니다.
+
+    - path: 'package.json' # 패키지 설정
+      instructions: |
+        의존성 추가는 필요한 범위인지, 중복 라이브러리인지, 보안과 번들 영향이 없는지 확인합니다.
+
+  # 자동 리뷰 설정입니다. (reviews 하위에 중첩되어야 인식됩니다)
+  auto_review:
+    enabled: true # 자동 리뷰 활성화
+    drafts: true # draft PR도 리뷰 대상에 포함
+    base_branches:
+      - 'main' # 기본 브랜치
+      - 'develop' # 개발 브랜치
+    labels:
+      - '!wip' # 작업 중 PR 제외
+      - '!skip-review' # 리뷰 생략 라벨 제외
+    ignore_usernames:
+      - 'dependabot' # 의존성 봇 제외
+      - 'renovate' # 업데이트 봇 제외
+
+# 채팅 기능 설정입니다.
+chat:
+  art: false # ASCII 아트 비활성화
+  auto_reply: true # 자동 응답 사용
+
+# 코드 가이드라인을 참고할 문서 경로입니다. 추후 추가 가능
+knowledge_base:
+  web_search:
+    enabled: true # 웹 검색 활성화
+  code_guidelines:
+    enabled: true
+    filePatterns:
+      - 'README.md'
+      - '.github/**'
+      - 'docs/**'
