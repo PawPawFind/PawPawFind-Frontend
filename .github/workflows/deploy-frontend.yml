@@ -9,11 +9,15 @@ concurrency:
   group: deploy-frontend
   cancel-in-progress: true
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       # React/Vite 등 빌드 프로젝트면 주석 해제
       # - uses: actions/setup-node@v4
@@ -22,11 +26,10 @@ jobs:
       #     cache: npm
       # - run: npm ci && npm run build
 
-      - name: Configure AWS credentials
+      - name: Configure AWS credentials (OIDC)
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          role-to-assume: arn:aws:iam::976550610726:role/GitHubActions-PawPawFind-Frontend
           aws-region: ${{ secrets.AWS_REGION }}
 
       - name: Sync to S3
