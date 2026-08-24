@@ -1,0 +1,73 @@
+.login-sheet {
+  position: fixed;
+  z-index: 100;
+  inset: auto 50% 0;
+  width: min(calc(100% - 2rem), 620px);
+  max-width: none;
+  margin: 0;
+  padding: 52px var(--space-6) var(--space-8);
+  translate: -50% 0;
+  border: 0;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  background: var(--color-bg);
+  color: var(--color-text-primary);
+  box-shadow: 0 -12px 40px rgb(17 24 39 / 18%);
+}
+.login-sheet::backdrop {
+  background: rgb(31 41 55 / 42%);
+}
+.login-sheet__close {
+  position: absolute;
+  top: var(--space-3);
+  right: var(--space-3);
+  display: grid;
+  place-items: center;
+  width: var(--touch-target-min);
+  height: var(--touch-target-min);
+  border: 0;
+  background: transparent;
+  color: var(--color-text-tertiary);
+  font: inherit;
+  font-size: 26px;
+  cursor: pointer;
+}
+.login-sheet h2 {
+  margin: 0 0 var(--space-2);
+  font-size: clamp(22px, 4vw, 27px);
+}
+.login-sheet p {
+  margin: 0 0 var(--space-6);
+  color: var(--color-text-tertiary);
+  line-height: 1.65;
+}
+.login-sheet__kakao,
+.login-sheet__later {
+  width: 100%;
+  min-height: var(--button-height-primary);
+  border: 0;
+  border-radius: var(--radius-md);
+  font: inherit;
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+}
+.login-sheet__kakao {
+  background: #fee500;
+  color: #191919;
+}
+.login-sheet__later {
+  margin-top: var(--space-3);
+  background: transparent;
+  color: var(--color-text-tertiary);
+}
+.login-sheet button:focus-visible {
+  outline: var(--focus-outline);
+  outline-offset: var(--focus-outline-offset);
+}
+@media (min-width: 720px) {
+  .login-sheet {
+    inset: 50% auto auto 50%;
+    padding: 56px 32px 28px;
+    translate: -50% -50%;
+    border-radius: var(--radius-lg);
+  }
+}

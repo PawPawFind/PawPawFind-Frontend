@@ -1,0 +1,75 @@
+.ds-image-viewer__close {
+  display: grid;
+  place-items: center;
+  width: var(--touch-target-min);
+  height: var(--touch-target-min);
+  padding: 0;
+  border: 1px solid rgb(255 255 255 / 55%);
+  border-radius: 50%;
+  background: rgb(17 24 39 / 68%);
+  color: var(--color-bg);
+  cursor: pointer;
+}
+.ds-image-viewer__trigger {
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  background: transparent;
+  cursor: zoom-in;
+}
+.ds-image-viewer__close svg {
+  width: 23px;
+  height: 23px;
+  stroke: currentcolor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.7;
+}
+.ds-image-viewer__trigger img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.ds-image-viewer__trigger:focus-visible,
+.ds-image-viewer__close:focus-visible {
+  outline: var(--focus-outline);
+  outline-offset: var(--focus-outline-offset);
+}
+.ds-image-viewer__dialog {
+  position: fixed;
+  z-index: 110;
+  width: min(calc(100vw - 2rem), 1200px);
+  max-width: none;
+  height: min(calc(100vh - 2rem), 900px);
+  max-height: none;
+  margin: auto;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  border-radius: var(--radius-lg);
+  background: #000;
+}
+.ds-image-viewer__dialog::backdrop {
+  background: rgb(0 0 0 / 86%);
+}
+.ds-image-viewer__dialog img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.ds-image-viewer__close {
+  position: absolute;
+  z-index: 1;
+  top: var(--space-3);
+  right: var(--space-3);
+}
+@media (max-width: 520px) {
+  .ds-image-viewer__dialog {
+    width: 100vw;
+    height: 100dvh;
+    border-radius: 0;
+  }
+}
