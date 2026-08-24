@@ -1,0 +1,31 @@
+.ds-loading-indicator {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-2);
+  padding: var(--space-6) var(--space-4);
+  color: var(--color-text-tertiary);
+  text-align: center;
+}
+.ds-loading-indicator__animation {
+  width: 96px;
+  height: 96px;
+}
+.ds-loading-indicator__animation > div,
+.ds-loading-indicator__animation svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.ds-loading-indicator--small {
+  padding: var(--space-3);
+  font-size: var(--font-size-xs);
+}
+.ds-loading-indicator--small .ds-loading-indicator__animation {
+  width: 64px;
+  height: 64px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .ds-loading-indicator__animation {
+    animation: none;
+  }
+}
