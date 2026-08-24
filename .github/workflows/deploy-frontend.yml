@@ -12,6 +12,9 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
     steps:
       - uses: actions/checkout@v4
 
@@ -22,10 +25,11 @@ jobs:
       #     cache: npm
       # - run: npm ci && npm run build
 
-      - name: Configure AWS credentials
+      - name: Configure AWS credentials (OIDC)
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: arn:aws:iam::976550610726:role/GitHubActions-PawPawFind-Frontend
+          role-session-name: github-actions-frontend
           aws-region: ap-northeast-2
 
       - name: Sync to S3
