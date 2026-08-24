@@ -1,1 +1,0 @@
-export { ShelterNoticeDetailPage } from './pages'
