@@ -11,10 +11,18 @@ export interface AuthResponse {
   provider: string
 }
 
+export function createOAuthState() {
+  // HTTP에서도 사용할 수 있는 Web Crypto 난수로 OAuth state를 만든다.
+  const randomBytes = new Uint8Array(32)
+  crypto.getRandomValues(randomBytes)
+
+  return Array.from(randomBytes, (byte) => byte.toString(16).padStart(2, '0')).join('')
+}
+
 export function login(returnTo?: string) {
   if (!env.kakaoRestApiKey) throw new Error('카카오 로그인 REST API 키가 설정되지 않았습니다.')
 
-  const state = crypto.randomUUID()
+  const state = createOAuthState()
   const redirectUri = `${window.location.origin}/auth/kakao/callback`
   const authorizeUrl = new URL('https://kauth.kakao.com/oauth/authorize')
 
