@@ -16,7 +16,6 @@ export function SightingReportDetailPage({ reportType = 'FOUND' }: SightingRepor
   const { data: report, isError, isPending, refetch } = useSightingReportQuery(resolvedReportId)
   const isLostReport = reportType === 'LOST'
   const reportLabel = isLostReport ? '등록된 실종 동물' : '목격 제보'
-  const [isRouteOpen, setIsRouteOpen] = useState(false)
   const [selectedPhotoIndex, setSelectedPhotoIndex] = useState(0)
 
   if (isPending)
@@ -156,37 +155,6 @@ export function SightingReportDetailPage({ reportType = 'FOUND' }: SightingRepor
               longitude={report.location.lng}
               radiusM={report.location.radiusM}
             />
-            {!isRouteOpen ? (
-              <button
-                className="report-detail-page__route-button"
-                onClick={() => setIsRouteOpen(true)}
-                type="button"
-              >
-                예측 경로 확인하기
-              </button>
-            ) : (
-              <div className="report-detail-page__route">
-                <div className="report-detail-page__route-heading">
-                  <h3>예측 이동 경로</h3>
-                  <button onClick={() => setIsRouteOpen(false)} type="button">
-                    접기
-                  </button>
-                </div>
-                <ol>
-                  {report.predictedRoute.map((point) => (
-                    <li
-                      className={`report-detail-page__route-point report-detail-page__route-point--${point.kind}`}
-                      key={point.id}
-                    >
-                      <strong>{point.areaText}</strong>
-                      <span>{point.dateTimeText}</span>
-                      <span>{point.description}</span>
-                    </li>
-                  ))}
-                </ol>
-                <p>여러 제보의 시간과 위치를 이어 추정한 경로예요. 실제 이동과 다를 수 있어요.</p>
-              </div>
-            )}
           </section>
           <p className="report-detail-page__privacy">제보자 정보는 공개되지 않아요.</p>
         </section>

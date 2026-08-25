@@ -63,7 +63,7 @@ export function AppLayout() {
             </div>
             <div className="app-footer__group">
               <strong>서비스</strong>
-              <Link to={routeUrls.sightingReports()}>목격 제보 지도</Link>
+
               <Link to={routeUrls.sightingReports()}>목격 제보 목록</Link>
               <Link onClick={handleFindClick} to={routeUrls.missingAnimalSearch()}>
                 실종 동물 찾기
