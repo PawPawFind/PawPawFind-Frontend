@@ -18,12 +18,22 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # React/Vite 등 빌드 프로젝트면 주석 해제
-      # - uses: actions/setup-node@v4
-      #   with:
-      #     node-version: "20"
-      #     cache: npm
-      # - run: npm ci && npm run build
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+
+      - name: Install and build
+        env:
+          HUSKY: "0"
+          VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
+          VITE_KAKAO_MAP_APP_KEY: ${{ secrets.VITE_KAKAO_MAP_APP_KEY }}
+          VITE_KAKAO_REST_API_KEY: ${{ secrets.VITE_KAKAO_REST_API_KEY }}
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm build
 
       - name: Configure AWS credentials (OIDC)
         uses: aws-actions/configure-aws-credentials@v4
@@ -34,23 +44,18 @@ jobs:
 
       - name: Sync to S3
         run: |
-          SOURCE_DIR="."
-          # SOURCE_DIR="dist"
+          SOURCE_DIR="dist"
 
           aws s3 sync "$SOURCE_DIR" "s3://${{ secrets.FRONTEND_S3_BUCKET }}/" \
             --delete \
-            --exclude ".git/*" \
-            --exclude ".github/*" \
-            --exclude "node_modules/*" \
-            --exclude "README.md" \
             --exclude ".DS_Store"
 
-          for file in $(find "$SOURCE_DIR" -maxdepth 5 -name "*.html" 2>/dev/null); do
-            rel="${file#./}"
+          while IFS= read -r -d '' file; do
+            rel="${file#"$SOURCE_DIR"/}"
             aws s3 cp "$file" "s3://${{ secrets.FRONTEND_S3_BUCKET }}/$rel" \
               --content-type "text/html; charset=utf-8" \
               --cache-control "no-cache, no-store, must-revalidate"
-          done
+          done < <(find "$SOURCE_DIR" -name "*.html" -print0)
 
       # CloudFront 사용 시
       # - run: aws cloudfront create-invalidation --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} --paths "/*"
