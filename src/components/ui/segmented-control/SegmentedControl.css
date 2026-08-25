@@ -1,0 +1,64 @@
+.ds-segmented-control {
+  --segmented-control-hidden-radio-size: 1px;
+  --segmented-control-option-radius: 10px;
+  --segmented-control-hover-background: rgb(255 255 255 / 0.6);
+  --segmented-control-selected-shadow: 0 1px 3px rgb(17 24 39 / 0.08);
+
+  display: flex;
+  gap: var(--space-1);
+  width: 100%;
+  padding: var(--space-1);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+}
+
+.ds-segmented-control__option {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
+  cursor: pointer;
+}
+
+.ds-segmented-control__option input {
+  position: absolute;
+  width: var(--segmented-control-hidden-radio-size);
+  height: var(--segmented-control-hidden-radio-size);
+  opacity: 0;
+}
+
+.ds-segmented-control__option span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--control-height);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--segmented-control-option-radius);
+  color: var(--color-text-secondary);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-compact);
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+.ds-segmented-control__option:hover input:not(:disabled):not(:checked) + span {
+  background: var(--segmented-control-hover-background);
+}
+
+.ds-segmented-control__option input:checked + span {
+  background: var(--color-bg);
+  color: var(--color-text-primary);
+  box-shadow: var(--segmented-control-selected-shadow);
+}
+
+.ds-segmented-control__option input:focus-visible + span {
+  outline: var(--focus-outline);
+  outline-offset: var(--focus-outline-offset);
+}
+
+.ds-segmented-control__option:has(input:disabled) {
+  cursor: not-allowed;
+}
+
+.ds-segmented-control__option input:disabled + span {
+  color: var(--color-disabled);
+}

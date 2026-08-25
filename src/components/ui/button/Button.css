@@ -1,0 +1,55 @@
+.ds-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding-inline: var(--space-4);
+  border: var(--border-width-default) solid transparent;
+  font: inherit;
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-compact);
+  text-align: center;
+  cursor: pointer;
+}
+
+.ds-button--medium {
+  min-height: var(--control-height);
+  padding-block: var(--space-2);
+  border-radius: var(--radius-sm);
+}
+
+.ds-button--large {
+  min-height: var(--button-height-primary);
+  padding-block: var(--space-3);
+  border-radius: var(--radius-md);
+}
+
+.ds-button--primary {
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+}
+
+.ds-button--primary:hover:not(:disabled) {
+  background: #e08c05;
+}
+
+.ds-button--secondary {
+  border-color: var(--color-border);
+  background: var(--color-bg);
+  color: var(--color-text-primary);
+}
+
+.ds-button--secondary:hover:not(:disabled) {
+  background: var(--color-surface);
+}
+
+.ds-button:focus-visible {
+  outline: var(--focus-outline);
+  outline-offset: var(--focus-outline-offset);
+}
+
+.ds-button:disabled {
+  border-color: var(--color-border);
+  background: var(--color-border);
+  color: var(--color-disabled);
+  cursor: not-allowed;
+}

@@ -1,0 +1,43 @@
+.ds-selectable-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 36px;
+  padding: 6px var(--space-3);
+  border: var(--border-width-default) solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: rgb(255 255 255 / 0.94);
+  color: var(--color-text-secondary);
+  font: inherit;
+  font-size: var(--font-size-xs);
+  line-height: var(--line-height-compact);
+  cursor: pointer;
+}
+
+.ds-selectable-chip:hover:not(:disabled):not([aria-pressed='true']) {
+  background: var(--color-surface);
+}
+
+.ds-selectable-chip[aria-pressed='true'] {
+  border-color: var(--color-accent);
+  background: var(--color-accent-soft);
+  color: var(--color-text-primary);
+  font-weight: var(--font-weight-semibold);
+}
+
+.ds-selectable-chip[aria-pressed='true']:hover:not(:disabled) {
+  border-color: #e08c05;
+  background: var(--color-accent-soft);
+}
+
+.ds-selectable-chip:focus-visible {
+  outline: var(--focus-outline);
+  outline-offset: var(--focus-outline-offset);
+}
+
+.ds-selectable-chip:disabled {
+  cursor: not-allowed;
+  border-color: var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-disabled);
+}
