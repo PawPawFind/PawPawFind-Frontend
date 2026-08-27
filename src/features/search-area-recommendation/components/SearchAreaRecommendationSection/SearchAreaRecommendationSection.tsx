@@ -1,4 +1,5 @@
 import { useSearchAreaRecommendationMutation } from '../../hooks/useSearchAreaRecommendation'
+import { useReverseGeocodedAddresses } from '../../hooks/useReverseGeocodedAddresses'
 import { SearchAreaRecommendationError } from '../../api/searchAreaRecommendation.api'
 import { priorityColorForRank, SearchAreaRecommendationMap } from '../SearchAreaRecommendationMap'
 import './SearchAreaRecommendationSection.css'
@@ -15,6 +16,7 @@ export function SearchAreaRecommendationSection({
 }: SearchAreaRecommendationSectionProps) {
   const recommendMutation = useSearchAreaRecommendationMutation()
   const recommendation = recommendMutation.data
+  const { addressesByRank } = useReverseGeocodedAddresses(recommendation?.areas ?? [])
 
   const errorMessage =
     recommendMutation.error instanceof SearchAreaRecommendationError
@@ -73,7 +75,14 @@ export function SearchAreaRecommendationSection({
                   style={{ backgroundColor: priorityColorForRank(area.rank) }}
                 />
                 <div>
-                  <strong>{area.rank}순위</strong>
+                  <strong>
+                    {area.rank}순위
+                    {addressesByRank[area.rank] === undefined
+                      ? ' · 주소 확인 중...'
+                      : addressesByRank[area.rank]
+                        ? ` · ${addressesByRank[area.rank]}`
+                        : ''}
+                  </strong>
                   <p>
                     {area.reason?.trim() || '이 지역을 우선적으로 확인해보세요.'} (반경{' '}
                     {Math.round(area.radiusMeters)}m)

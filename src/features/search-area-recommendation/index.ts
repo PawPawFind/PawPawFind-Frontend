@@ -4,6 +4,7 @@ export {
   priorityColorForRank,
 } from './components/SearchAreaRecommendationMap'
 export { useSearchAreaRecommendationMutation } from './hooks/useSearchAreaRecommendation'
+export { useReverseGeocodedAddresses } from './hooks/useReverseGeocodedAddresses'
 export {
   recommendSearchAreas,
   SearchAreaRecommendationError,
