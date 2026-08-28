@@ -3,21 +3,19 @@ import { useReverseGeocodedAddresses } from '../../hooks/useReverseGeocodedAddre
 import { SearchAreaRecommendationError } from '../../api/searchAreaRecommendation.api'
 import { priorityColorForRank, SearchAreaRecommendationMap } from '../SearchAreaRecommendationMap'
 import './SearchAreaRecommendationSection.css'
+import type { SearchAreaItem } from '../../types'
 
 interface SearchAreaRecommendationSectionProps {
   reportId: string
 }
+const EMPTY_AREAS: SearchAreaItem[] = []
 
-// V1은 LOST + 강아지 신고만 지원(백엔드 스펙 확정). 그 외 신고는 버튼을 눌러도
-// 422와 함께 "강아지 실종 신고에서만 지원돼요" 메시지가 뜬다 — 별도로 신고
-// 종류를 미리 조회하지 않고, 이 메시지로 자연스럽게 안내한다.
 export function SearchAreaRecommendationSection({
   reportId,
 }: SearchAreaRecommendationSectionProps) {
   const recommendMutation = useSearchAreaRecommendationMutation()
   const recommendation = recommendMutation.data
-  const { addressesByRank } = useReverseGeocodedAddresses(recommendation?.areas ?? [])
-
+  const { addressesByRank } = useReverseGeocodedAddresses(recommendation?.areas ?? EMPTY_AREAS)
   const errorMessage =
     recommendMutation.error instanceof SearchAreaRecommendationError
       ? recommendMutation.error.message
