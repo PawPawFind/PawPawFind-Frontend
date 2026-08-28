@@ -1,0 +1,24 @@
+.search-area-recommendation-map__viewport {
+  position: relative;
+  height: 260px;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+}
+.search-area-recommendation-map__canvas,
+.search-area-recommendation-map__grid {
+  position: absolute;
+  inset: 0;
+}
+.search-area-recommendation-map__grid {
+  background-image:
+    linear-gradient(var(--color-border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--color-border) 1px, transparent 1px);
+  background-size: 44px 44px;
+}
+.search-area-recommendation-map p {
+  margin: var(--space-2) 0 0;
+  color: var(--color-text-tertiary);
+  font-size: var(--font-size-xs);
+}

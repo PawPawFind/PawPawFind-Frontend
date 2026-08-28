@@ -30,6 +30,8 @@
 
 .ds-text-input__control {
   width: 100%;
+  min-width: 0;
+  max-width: 100%;
   min-height: var(--control-height);
   padding: var(--space-3) var(--space-4);
   border: var(--border-width-default) solid var(--color-border);
@@ -37,6 +39,13 @@
   background: var(--color-bg);
   color: var(--color-text-primary);
   font: inherit;
+}
+
+.ds-text-input__control[type='date'],
+.ds-text-input__control[type='time'] {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .ds-text-input__control::placeholder {

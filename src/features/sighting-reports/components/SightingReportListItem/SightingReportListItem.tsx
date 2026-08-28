@@ -42,11 +42,11 @@ function Content({ report }: { report: SightingReportListItemViewModel }) {
           {[report.speciesLabel, report.colorText, report.sizeLabel].filter(Boolean).join(' · ')}
         </p>
         <div className="sighting-report-list-item__meta">
-          <span>
+          <span className="sighting-report-list-item__meta-location">
             <svg aria-hidden="true" viewBox="0 0 24 24">
               <path d="M12 2.5a7 7 0 0 0-7 7c0 5.25 7 12 7 12s7-6.75 7-12a7 7 0 0 0-7-7Zm0 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5Z" />
             </svg>
-            {report.areaText}
+            <span className="sighting-report-list-item__meta-text">{report.areaText}</span>
           </span>
           <span>
             <svg aria-hidden="true" fill="none" viewBox="0 0 24 24">

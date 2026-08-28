@@ -85,11 +85,4 @@ export interface SightingReportDetail extends SightingReportListItem {
     lng: number
     radiusM: number
   }
-  predictedRoute: {
-    id: string
-    areaText: string
-    dateTimeText: string
-    description: string
-    kind: 'reported' | 'matched' | 'predicted'
-  }[]
 }

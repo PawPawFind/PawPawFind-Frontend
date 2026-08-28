@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, useParams } from 'react-router'
 import { routeUrls } from '@/app/router/paths'
+import { SearchAreaRecommendationSection } from '@/features/search-area-recommendation'
 import { useMissingAnimalSearchResultsQuery } from '../hooks/useMissingAnimalSearch'
 import './MissingAnimalSearchResultPage.css'
 
@@ -47,6 +48,8 @@ export function MissingAnimalSearchResultPage() {
         <h1>비슷한 동물 검색 결과</h1>
         <p>입력한 사진과 정보를 바탕으로 유사도가 높은 순서대로 보여드려요.</p>
       </header>
+
+      {searchId && <SearchAreaRecommendationSection reportId={searchId} />}
 
       {resultsQuery.isPending ? (
         <p className="missing-animal-results-page__status" role="status">

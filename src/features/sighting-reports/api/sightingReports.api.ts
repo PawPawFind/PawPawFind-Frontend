@@ -129,6 +129,5 @@ export async function getSightingReport(
       alt: `${listItem.title} 제보 사진 ${index + 1}`,
     })),
     location: { lat: report.latitude, lng: report.longitude, radiusM: 300 },
-    predictedRoute: [],
   } satisfies SightingReportDetail
 }

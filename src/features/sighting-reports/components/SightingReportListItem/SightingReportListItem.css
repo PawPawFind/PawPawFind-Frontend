@@ -1,6 +1,7 @@
 .sighting-report-list-item {
   position: relative;
   display: flex;
+  height: 100%;
   gap: 14px;
   width: 100%;
   min-width: 0;
@@ -11,8 +12,8 @@
   color: var(--color-text-primary);
   font: inherit;
   text-align: left;
+  box-sizing: border-box;
 }
-
 .sighting-report-list-item--interactive {
   cursor: pointer;
 }
@@ -88,6 +89,26 @@
 }
 .sighting-report-list-item__meta span:last-child svg {
   fill: none;
+}
+.sighting-report-list-item__meta-location {
+  display: block !important;
+  position: relative;
+  width: 100%;
+  padding-left: 19px;
+  min-width: 0;
+}
+.sighting-report-list-item__meta-location svg {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+}
+.sighting-report-list-item__meta-text {
+  display: block !important;
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 .sighting-report-list-item__tags {
   display: flex;

@@ -80,6 +80,9 @@
   padding: 0;
   list-style: none;
 }
+.report-list > li {
+  min-width: 0;
+}
 .report-list-page__source {
   margin: var(--space-5) 0 0;
   color: var(--color-text-tertiary);
