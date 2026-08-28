@@ -14,11 +14,17 @@ export function useReverseGeocodedAddresses(areas: SearchAreaItem[]) {
   const appKey = import.meta.env.VITE_KAKAO_MAP_APP_KEY ?? ''
 
   useEffect(() => {
-    if (!appKey || areas.length === 0) {
+    if (areas.length === 0) {
       setAddressesByRank({})
       return
     }
 
+    if (!appKey) {
+      setAddressesByRank(
+        Object.fromEntries(areas.map((area) => [area.rank, null])) as AddressByRank,
+      )
+      return
+    }
     let active = true
 
     void loadKakaoMaps(appKey)
@@ -41,7 +47,11 @@ export function useReverseGeocodedAddresses(areas: SearchAreaItem[]) {
         })
       })
       .catch(() => {
-        if (active) setAddressesByRank({})
+        if (active) {
+          setAddressesByRank(
+            Object.fromEntries(areas.map((area) => [area.rank, null])) as AddressByRank,
+          )
+        }
       })
 
     return () => {
