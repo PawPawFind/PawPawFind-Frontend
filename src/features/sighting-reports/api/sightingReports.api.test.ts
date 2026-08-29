@@ -146,11 +146,17 @@ describe('sightingReports API mapper', () => {
   })
 
   it('사진 URL 발급이 실패하면 등록 실패를 전달한다', async () => {
+    const deletedReportIds: string[] = []
+
     server.use(
       http.post(`*${SIGHTING_REPORTS_API_PATH}`, () => HttpResponse.json({ reportId: 38 })),
       http.post(`*${PRESIGN_UPLOAD_API_PATH}`, () =>
         HttpResponse.json({ message: '업로드 URL 발급 실패' }, { status: 500 }),
       ),
+      http.delete(`*${SIGHTING_REPORTS_API_PATH}/:reportId`, ({ params }) => {
+        deletedReportIds.push(String(params.reportId))
+        return new HttpResponse(null, { status: 200 })
+      }),
     )
 
     await expect(
@@ -169,6 +175,45 @@ describe('sightingReports API mapper', () => {
         photos: [{ file: new File(['photo'], 'dog.jpg', { type: 'image/jpeg' }), sortOrder: 1 }],
         features: [],
       }),
-    ).rejects.toBeDefined()
+    ).rejects.toMatchObject({
+      name: 'ReportAssetCreationError',
+      reportId: 38,
+      cleanupFailed: false,
+    })
+    expect(deletedReportIds).toEqual(['38'])
+  })
+
+  it('사진 등록과 생성된 제보 정리가 모두 실패하면 reportId를 포함한 오류를 전달한다', async () => {
+    server.use(
+      http.post(`*${SIGHTING_REPORTS_API_PATH}`, () => HttpResponse.json({ reportId: 39 })),
+      http.post(`*${PRESIGN_UPLOAD_API_PATH}`, () =>
+        HttpResponse.json({ message: '업로드 URL 발급 실패' }, { status: 500 }),
+      ),
+      http.delete(`*${SIGHTING_REPORTS_API_PATH}/:reportId`, () =>
+        HttpResponse.json({ message: '제보 정리 실패' }, { status: 500 }),
+      ),
+    )
+
+    await expect(
+      createSightingReport({
+        report: {
+          reportType: 'FOUND',
+          title: '정리 실패 제보',
+          species: 'DOG',
+          size: 'SMALL',
+          eventDate: '2026-08-25',
+          eventHour: null,
+          happenPlace: '서울',
+          latitude: 37.5,
+          longitude: 127,
+        },
+        photos: [{ file: new File(['photo'], 'dog.jpg', { type: 'image/jpeg' }), sortOrder: 1 }],
+        features: [],
+      }),
+    ).rejects.toMatchObject({
+      name: 'ReportAssetCreationError',
+      reportId: 39,
+      cleanupFailed: true,
+    })
   })
 })

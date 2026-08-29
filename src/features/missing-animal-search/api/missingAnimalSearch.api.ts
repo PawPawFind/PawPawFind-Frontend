@@ -85,10 +85,13 @@ async function enrichCandidate(
   return null
 }
 
-export async function createMissingAnimalSearch(submission: MissingAnimalSearchSubmission) {
-  const createdReport = await createReportWithAssets(submission, { speciesFormat: 'KOREAN' })
-  await apiClient.post<MatchQueryApiResponse>(runMatchApiPath(createdReport.reportId))
-  return createdReport
+export async function createMissingAnimalReport(submission: MissingAnimalSearchSubmission) {
+  return createReportWithAssets(submission, { speciesFormat: 'KOREAN' })
+}
+
+export async function runMissingAnimalMatch(reportId: number) {
+  const { data } = await apiClient.post<MatchQueryApiResponse>(runMatchApiPath(reportId))
+  return data
 }
 
 export async function getMissingAnimalSearchResults(reportId: string, signal?: AbortSignal) {

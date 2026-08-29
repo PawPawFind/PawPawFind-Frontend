@@ -1,78 +1,16 @@
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import { Link, useNavigate } from 'react-router'
-import { REPORT_FEATURE_GROUPS } from '@/types/report'
-import { ActiveSightingReportFilters } from '../components/ActiveSightingReportFilters'
-import { SightingReportFilterPanel } from '../components/SightingReportFilterPanel'
 import { SightingReportListItem } from '../components/SightingReportListItem'
 import { SightingReportPagination } from '../components/SightingReportPagination'
 import { useSightingReportsQuery } from '../hooks/useSightingReportsQuery'
 import './SightingReportListPage.css'
 
-const filterGroups = [
-  {
-    key: 'species',
-    label: '동물 종류',
-    selectionType: 'single',
-    options: [
-      { value: 'dog', label: '강아지' },
-      { value: 'cat', label: '고양이' },
-    ],
-  },
-  {
-    key: 'size',
-    label: '크기',
-    selectionType: 'single',
-    options: [
-      { value: 'small', label: '소형' },
-      { value: 'medium', label: '중형' },
-      { value: 'large', label: '대형' },
-    ],
-  },
-  ...REPORT_FEATURE_GROUPS.map((group) => ({
-    key: group.category,
-    label: group.category === '털색' ? '색상' : group.label,
-    selectionType: group.selection,
-    options: group.options.map((option) => ({
-      value: `${group.category}:${option.keyword}`,
-      label: option.label,
-    })),
-  })),
-] as const
-
 export function SightingReportListPage() {
   const navigate = useNavigate()
   const pageSize = 10
-  const [isFilterOpen, setIsFilterOpen] = useState(false)
-  const [selectedFilters, setSelectedFilters] = useState<string[]>([])
   const [currentPage, setCurrentPage] = useState(0)
   const { data, isError, isPending, refetch } = useSightingReportsQuery(currentPage, pageSize)
-  const labels = useMemo(
-    () =>
-      new Map<string, string>(
-        filterGroups.flatMap((group) =>
-          group.options.map((option) => [option.value, option.label] as const),
-        ),
-      ),
-    [],
-  )
   const reports = data?.items ?? []
-  const activeFilters = selectedFilters.map((value) => ({
-    value,
-    label: labels.get(value) ?? value,
-  }))
-  const toggleFilter = (value: string) => {
-    const group = filterGroups.find((candidate) =>
-      candidate.options.some((option) => option.value === value),
-    )
-    setSelectedFilters((current) => {
-      if (current.includes(value)) return current.filter((item) => item !== value)
-      if (group?.selectionType === 'single') {
-        const groupValues = new Set(group.options.map((option) => option.value))
-        return [...current.filter((item) => !groupValues.has(item)), value]
-      }
-      return [...current, value]
-    })
-  }
 
   return (
     <main className="report-list-page">
@@ -84,29 +22,6 @@ export function SightingReportListPage() {
         <h2 className="report-list-page__sr-only" id="report-list-title">
           목격 제보 목록
         </h2>
-        <button
-          aria-expanded={isFilterOpen}
-          className={`report-list-page__filter-trigger${isFilterOpen || selectedFilters.length > 0 ? ' report-list-page__filter-trigger--active' : ''}`}
-          onClick={() => setIsFilterOpen((open) => !open)}
-          type="button"
-        >
-          필터{selectedFilters.length > 0 ? ` ${selectedFilters.length}` : ''}
-        </button>
-        {isFilterOpen && (
-          <SightingReportFilterPanel
-            groups={filterGroups}
-            onToggle={toggleFilter}
-            selectedValues={selectedFilters}
-          />
-        )}
-        <div className="report-list-page__active-filters">
-          <ActiveSightingReportFilters filters={activeFilters} onRemove={toggleFilter} />
-          {activeFilters.length > 0 && (
-            <button onClick={() => setSelectedFilters([])} type="button">
-              모두 지우기
-            </button>
-          )}
-        </div>
         {isPending && (
           <p className="report-list-page__feedback" role="status">
             목격 제보를 불러오는 중입니다.
