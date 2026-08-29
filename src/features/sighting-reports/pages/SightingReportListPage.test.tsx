@@ -50,6 +50,7 @@ describe('SightingReportListPage', () => {
     expect(searchParams.get('page')).toBe('0')
     expect(searchParams.get('size')).toBe('10')
     expect(searchParams.get('reportType')).toBe('FOUND')
+    expect(screen.queryByRole('button', { name: /^필터/ })).not.toBeInTheDocument()
   })
 
   it('페이지를 선택하면 해당 서버 페이지를 요청한다', async () => {
@@ -63,24 +64,6 @@ describe('SightingReportListPage', () => {
       await screen.findByRole('heading', { name: '북가좌동 하천 주변 흰 고양이' }),
     ).toBeInTheDocument()
     expect(screen.getByText('전체 15건 · 11–15')).toBeInTheDocument()
-  })
-
-  it('필터 그룹을 펼쳐 선택하고 선택 개수와 요약을 표시한다', async () => {
-    const user = userEvent.setup()
-    renderPage()
-
-    const filterButton = screen.getByRole('button', { name: '필터' })
-    expect(filterButton).not.toHaveClass('report-list-page__filter-trigger--active')
-    await user.click(filterButton)
-    expect(filterButton).toHaveClass('report-list-page__filter-trigger--active')
-    await user.click(screen.getByRole('button', { name: '동물 종류' }))
-    await user.click(screen.getByRole('button', { name: '강아지' }))
-
-    expect(screen.getByRole('button', { name: '필터 1' })).toHaveClass(
-      'report-list-page__filter-trigger--active',
-    )
-    expect(screen.getByRole('button', { name: /동물 종류.*강아지/ })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: '강아지 필터 제거' })).toBeInTheDocument()
   })
 
   it('목격 제보가 없으면 빈 목록 안내를 보여준다', async () => {

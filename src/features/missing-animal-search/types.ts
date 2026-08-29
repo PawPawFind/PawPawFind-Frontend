@@ -1,6 +1,9 @@
 import type { CreateReportSubmission } from '@/api/reportCreation.api'
+import type { CreateMissingAnimalReportRequest } from '@/types/report'
 
-export type MissingAnimalSearchSubmission = CreateReportSubmission
+export type MissingAnimalSearchSubmission = Omit<CreateReportSubmission, 'report'> & {
+  report: CreateMissingAnimalReportRequest
+}
 
 export interface MatchCandidateApiItem {
   rank: number

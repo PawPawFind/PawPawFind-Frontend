@@ -30,6 +30,30 @@ interface CreateReportOptions {
 
 const speciesKoreanLabels = { DOG: '강아지', CAT: '고양이' } as const
 
+export class ReportAssetCreationError extends Error {
+  readonly reportId: number
+  readonly cleanupFailed: boolean
+
+  constructor(reportId: number, cleanupFailed: boolean) {
+    super(
+      cleanupFailed
+        ? '제보의 사진 또는 특징 등록에 실패했고 생성된 제보를 정리하지 못했습니다.'
+        : '제보의 사진 또는 특징 등록에 실패했습니다.',
+    )
+    this.name = 'ReportAssetCreationError'
+    this.reportId = reportId
+    this.cleanupFailed = cleanupFailed
+  }
+}
+
+export function getUncleanedReportId(error: unknown) {
+  return error instanceof ReportAssetCreationError && error.cleanupFailed ? error.reportId : null
+}
+
+export async function deleteCreatedReport(reportId: number) {
+  await apiClient.delete(`${REPORTS_API_PATH}/${reportId}`)
+}
+
 async function uploadReportPhoto(reportId: number, photo: ReportPhotoDraft) {
   const presignRequest: PresignUploadRequest = {
     filename: photo.file.name,
@@ -71,7 +95,7 @@ export async function createReportWithAssets(
     reportRequest,
   )
 
-  await Promise.all([
+  const assetResults = await Promise.allSettled([
     ...submission.photos.map((photo) => uploadReportPhoto(createdReport.reportId, photo)),
     ...submission.features.map((feature) => {
       const request: CreateReportFeatureRequest = {
@@ -81,6 +105,18 @@ export async function createReportWithAssets(
       return apiClient.post(REPORT_FEATURES_API_PATH, request)
     }),
   ])
+
+  if (assetResults.some((result) => result.status === 'rejected')) {
+    let cleanupFailed = false
+
+    try {
+      await deleteCreatedReport(createdReport.reportId)
+    } catch {
+      cleanupFailed = true
+    }
+
+    throw new ReportAssetCreationError(createdReport.reportId, cleanupFailed)
+  }
 
   return createdReport
 }

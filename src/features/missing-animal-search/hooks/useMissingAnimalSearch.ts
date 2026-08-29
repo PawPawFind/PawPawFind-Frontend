@@ -1,11 +1,16 @@
 import { useMutation, useQuery } from '@tanstack/react-query'
 import {
-  createMissingAnimalSearch,
+  createMissingAnimalReport,
   getMissingAnimalSearchResults,
+  runMissingAnimalMatch,
 } from '../api/missingAnimalSearch.api'
 
 export function useCreateMissingAnimalSearchMutation() {
-  return useMutation({ mutationFn: createMissingAnimalSearch })
+  return useMutation({ mutationFn: createMissingAnimalReport })
+}
+
+export function useRunMissingAnimalMatchMutation() {
+  return useMutation({ mutationFn: runMissingAnimalMatch })
 }
 
 export function useMissingAnimalSearchResultsQuery(reportId: string | undefined) {
