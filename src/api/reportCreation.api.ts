@@ -46,6 +46,14 @@ export class ReportAssetCreationError extends Error {
   }
 }
 
+export function getUncleanedReportId(error: unknown) {
+  return error instanceof ReportAssetCreationError && error.cleanupFailed ? error.reportId : null
+}
+
+export async function deleteCreatedReport(reportId: number) {
+  await apiClient.delete(`${REPORTS_API_PATH}/${reportId}`)
+}
+
 async function uploadReportPhoto(reportId: number, photo: ReportPhotoDraft) {
   const presignRequest: PresignUploadRequest = {
     filename: photo.file.name,
@@ -102,7 +110,7 @@ export async function createReportWithAssets(
     let cleanupFailed = false
 
     try {
-      await apiClient.delete(`${REPORTS_API_PATH}/${createdReport.reportId}`)
+      await deleteCreatedReport(createdReport.reportId)
     } catch {
       cleanupFailed = true
     }

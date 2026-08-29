@@ -101,4 +101,55 @@ describe('MissingAnimalSearchFlowPage', () => {
     expect(createReportRequestCount).toBe(1)
     expect(runMatchRequestCount).toBe(2)
   })
+
+  it('생성된 제보 정리가 실패하면 기존 제보 삭제 후에만 새 제보를 생성한다', async () => {
+    let createReportRequestCount = 0
+    let presignRequestCount = 0
+    let deleteReportRequestCount = 0
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response(null, { status: 200 })))
+    server.use(
+      http.post('*/api/reports', () => {
+        createReportRequestCount += 1
+        return HttpResponse.json({ reportId: createReportRequestCount === 1 ? 301 : 302 })
+      }),
+      http.post('*/api/uploads/presign', () => {
+        presignRequestCount += 1
+        return presignRequestCount === 1
+          ? HttpResponse.json({ message: '업로드 URL 발급 실패' }, { status: 500 })
+          : HttpResponse.json({
+              uploadUrl: 'https://uploads.test/missing-dog.png',
+              photoUrl: 'https://cdn.test/missing-dog.png',
+              objectKey: 'reports/missing-dog.png',
+            })
+      }),
+      http.delete('*/api/reports/:reportId', () => {
+        deleteReportRequestCount += 1
+        return deleteReportRequestCount === 1
+          ? HttpResponse.json({ message: '제보 정리 실패' }, { status: 500 })
+          : new HttpResponse(null, { status: 200 })
+      }),
+    )
+    renderWithQueryClient(
+      <MemoryRouter initialEntries={['/find/new']}>
+        <Routes>
+          <Route element={<MissingAnimalSearchFlowPage />} path="/find/new" />
+          <Route element={<h1>검색 결과 화면</h1>} path="/find/results/:searchId" />
+        </Routes>
+      </MemoryRouter>,
+    )
+
+    fireEvent.click(screen.getByRole('button', { name: '테스트 검색 시작' }))
+
+    expect(
+      await screen.findByRole('heading', { name: '이전 제보를 정리하지 못했어요' }),
+    ).toBeInTheDocument()
+    expect(createReportRequestCount).toBe(1)
+    expect(deleteReportRequestCount).toBe(1)
+
+    fireEvent.click(screen.getByRole('button', { name: '다시 시도' }))
+
+    expect(await screen.findByRole('heading', { name: '검색 결과 화면' })).toBeInTheDocument()
+    expect(createReportRequestCount).toBe(2)
+    expect(deleteReportRequestCount).toBe(2)
+  })
 })
