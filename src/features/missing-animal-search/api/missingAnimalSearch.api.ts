@@ -12,6 +12,7 @@ import type {
 
 const ANIMALS_API_PATH = '/api/animals'
 const REPORTS_API_PATH = '/api/reports'
+const RUN_MATCH_TIMEOUT_MS = 45_000
 const speciesLabels: Record<string, string> = { DOG: '강아지', CAT: '고양이' }
 const sizeLabels: Record<string, string> = { SMALL: '소형', MEDIUM: '중형', LARGE: '대형' }
 
@@ -90,7 +91,11 @@ export async function createMissingAnimalReport(submission: MissingAnimalSearchS
 }
 
 export async function runMissingAnimalMatch(reportId: number) {
-  const { data } = await apiClient.post<MatchQueryApiResponse>(runMatchApiPath(reportId))
+  const { data } = await apiClient.post<MatchQueryApiResponse>(
+    runMatchApiPath(reportId),
+    undefined,
+    { timeout: RUN_MATCH_TIMEOUT_MS },
+  )
   return data
 }
 

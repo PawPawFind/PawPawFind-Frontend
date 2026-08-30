@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router'
 import { getUncleanedReportId } from '@/api/reportCreation.api'
 import { routeUrls } from '@/app/router/paths'
@@ -13,8 +13,11 @@ import {
 } from './MissingAnimalSearchFormPage'
 import './MissingAnimalSearchFlowPage.css'
 
+const INITIAL_MATCH_DELAY_MS = 3_000
+
 export function MissingAnimalSearchFlowPage() {
   const navigate = useNavigate()
+  const matchDelayTimerRef = useRef<number | null>(null)
   const [previewUrl, setPreviewUrl] = useState('')
   const [createdReportId, setCreatedReportId] = useState<number | null>(null)
   const [uncleanedReportId, setUncleanedReportId] = useState<number | null>(null)
@@ -31,7 +34,16 @@ export function MissingAnimalSearchFlowPage() {
     return () => URL.revokeObjectURL(previewUrl)
   }, [previewUrl])
 
-  const requestMatch = (reportId: number) => {
+  useEffect(
+    () => () => {
+      if (matchDelayTimerRef.current !== null) {
+        window.clearTimeout(matchDelayTimerRef.current)
+      }
+    },
+    [],
+  )
+
+  const runMatchRequest = (reportId: number) => {
     runMatch.mutate(reportId, {
       onSuccess: () => {
         navigate(routeUrls.missingAnimalSearchResult(String(reportId)), { replace: true })
@@ -39,11 +51,28 @@ export function MissingAnimalSearchFlowPage() {
     })
   }
 
+  const requestMatch = (reportId: number, delayMs = 0) => {
+    if (matchDelayTimerRef.current !== null) {
+      window.clearTimeout(matchDelayTimerRef.current)
+      matchDelayTimerRef.current = null
+    }
+
+    if (delayMs === 0) {
+      runMatchRequest(reportId)
+      return
+    }
+
+    matchDelayTimerRef.current = window.setTimeout(() => {
+      matchDelayTimerRef.current = null
+      runMatchRequest(reportId)
+    }, delayMs)
+  }
+
   const createMissingReport = (submission: MissingAnimalSearchFormSubmission) => {
     createReport.mutate(submission, {
       onSuccess: ({ reportId }) => {
         setCreatedReportId(reportId)
-        requestMatch(reportId)
+        requestMatch(reportId, INITIAL_MATCH_DELAY_MS)
       },
       onError: (error) => {
         const reportId = getUncleanedReportId(error)
