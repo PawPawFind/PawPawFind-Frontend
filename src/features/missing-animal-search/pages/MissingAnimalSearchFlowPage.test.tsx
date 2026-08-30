@@ -1,4 +1,4 @@
-import { fireEvent, screen } from '@testing-library/react'
+import { act, fireEvent, screen, waitFor } from '@testing-library/react'
 import { http, HttpResponse } from 'msw'
 import { MemoryRouter, Route, Routes } from 'react-router'
 import { afterEach, describe, expect, it, vi } from 'vitest'
@@ -38,10 +38,32 @@ vi.mock('./MissingAnimalSearchFormPage', () => ({
   ),
 }))
 
-afterEach(() => vi.unstubAllGlobals())
+function controlInitialMatchDelay() {
+  const setTimeoutSpy = vi.spyOn(window, 'setTimeout')
+
+  return async () => {
+    await waitFor(() =>
+      expect(setTimeoutSpy.mock.calls.some(([, timeout]) => timeout === 3_000)).toBe(true),
+    )
+    const callIndex = setTimeoutSpy.mock.calls.findIndex(([, timeout]) => timeout === 3_000)
+    const handler = setTimeoutSpy.mock.calls[callIndex]?.[0]
+    const timerId = setTimeoutSpy.mock.results[callIndex]?.value
+
+    if (timerId !== undefined) window.clearTimeout(timerId)
+    act(() => {
+      if (typeof handler === 'function') handler()
+    })
+  }
+}
+
+afterEach(() => {
+  vi.unstubAllGlobals()
+  vi.restoreAllMocks()
+})
 
 describe('MissingAnimalSearchFlowPage', () => {
   it('폼 제출 후 실제 등록·매칭 중 분석 화면을 보여주고 reportId 결과로 이동한다', async () => {
+    const runInitialMatch = controlInitialMatchDelay()
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response(null, { status: 200 })))
     renderWithQueryClient(
       <MemoryRouter initialEntries={['/find/new']}>
@@ -56,10 +78,12 @@ describe('MissingAnimalSearchFlowPage', () => {
     expect(screen.getByRole('heading', { name: '비슷한 동물을 찾고 있어요' })).toBeInTheDocument()
     expect(screen.getByRole('progressbar', { name: '유사 동물 검색 중' })).toBeInTheDocument()
 
+    await runInitialMatch()
     expect(await screen.findByRole('heading', { name: '검색 결과 화면' })).toBeInTheDocument()
   })
 
   it('매칭 재시도는 제보를 중복 생성하지 않고 기존 reportId로 run-match만 다시 요청한다', async () => {
+    const runInitialMatch = controlInitialMatchDelay()
     let createReportRequestCount = 0
     let runMatchRequestCount = 0
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response(null, { status: 200 })))
@@ -85,6 +109,8 @@ describe('MissingAnimalSearchFlowPage', () => {
     )
 
     fireEvent.click(screen.getByRole('button', { name: '테스트 검색 시작' }))
+    expect(runMatchRequestCount).toBe(0)
+    await runInitialMatch()
     const retryButton = await screen.findByRole('button', { name: '다시 시도' })
 
     expect(
@@ -103,6 +129,7 @@ describe('MissingAnimalSearchFlowPage', () => {
   })
 
   it('생성된 제보 정리가 실패하면 기존 제보 삭제 후에만 새 제보를 생성한다', async () => {
+    const runInitialMatch = controlInitialMatchDelay()
     let createReportRequestCount = 0
     let presignRequestCount = 0
     let deleteReportRequestCount = 0
@@ -148,6 +175,7 @@ describe('MissingAnimalSearchFlowPage', () => {
 
     fireEvent.click(screen.getByRole('button', { name: '다시 시도' }))
 
+    await runInitialMatch()
     expect(await screen.findByRole('heading', { name: '검색 결과 화면' })).toBeInTheDocument()
     expect(createReportRequestCount).toBe(2)
     expect(deleteReportRequestCount).toBe(2)
