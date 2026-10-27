@@ -39,7 +39,7 @@ PawpawFind의 foundation과 공용 UI 경계를 정의합니다. 구체적인 �
 | type     | `--font-weight-semibold: 600`, `--line-height-compact: 1.4`                           | 선택 control과 label에서 반복되는 강조 굵기와 짧은 문구용 행간            |
 | spacing  | `--space-1/2/3/4/5/6/8: 4/8/12/16/20/24/32px`                                         | primitive 내부 간격과 feature surface에서 같은 의미로 반복되는 core scale |
 | radius   | `--radius-sm/md/lg/full: 8/12/16/999px`                                               | chip·pagination / button·input / panel / pill에서 반복되는 모서리         |
-| focus    | `--focus-outline: 3px solid var(--color-text-primary)`, `--focus-outline-offset: 2px` | 모든 interactive primitive의 일관된 `focus-visible` 표시                  |
+| focus    | `--focus-outline: 3px solid var(--color-text-primary)`, `--focus-outline-offset: 2px` | 버튼·칩·메뉴 option 등 입력 외 interactive 요소의 `focus-visible` 표시    |
 
 `10px` segmented option radius, 선택 shadow, hover surface, 숨긴 radio 크기는 해당 컴포넌트의
 CSS custom property로 관리한다. 같은 의미가 두 컴포넌트 이상에서 확인되지 않아 foundation token으로
@@ -89,15 +89,15 @@ preview layout class로 관리한다.
 
 ## 구현된 공용 primitive
 
-| Primitive        | 책임                                | 주요 지원 상태                                                   |
-| ---------------- | ----------------------------------- | ---------------------------------------------------------------- |
-| Button           | 제품 비종속 동작 실행               | primary/secondary, medium/large, hover, focus-visible, disabled  |
-| Badge            | 정적인 짧은 보조 정보               | 기본, 긴 문구 줄바꿈                                             |
-| SelectableChip   | 독립적인 선택 on/off                | selected/unselected, hover, focus-visible, disabled              |
-| SegmentedControl | 필수 단일 선택                      | selected/unselected, 전체·option disabled, native radio keyboard |
-| TextInput        | label·설명·오류가 연결된 한 줄 입력 | default/filled/disabled/required/help/invalid                    |
-| TimeBandSelect   | 시간 구간 단일 선택 custom dropdown | closed/open/selected/disabled, listbox keyboard                  |
-| ImageViewer      | 상세 사진을 modal에서 전체 표시     | closed/open, Esc·닫기 버튼, focus 복귀                           |
+| Primitive        | 책임                                | 주요 지원 상태                                                           |
+| ---------------- | ----------------------------------- | ------------------------------------------------------------------------ |
+| Button           | 제품 비종속 동작 실행               | primary/secondary, medium/large, hover, focus-visible, disabled, loading |
+| Badge            | 정적인 짧은 보조 정보               | 기본, 긴 문구 줄바꿈                                                     |
+| SelectableChip   | 독립적인 선택 on/off                | selected/unselected, hover, focus-visible, disabled                      |
+| SegmentedControl | 필수 단일 선택                      | selected/unselected, 전체·option disabled, native radio keyboard         |
+| TextInput        | label·설명·오류가 연결된 한 줄 입력 | default/filled/disabled/required/help/invalid, accent focus border       |
+| TimeBandSelect   | 시간 구간 단일 선택 custom dropdown | closed/open/placeholder/selected/required/disabled, accent focus border  |
+| ImageViewer      | 상세 사진을 modal에서 전체 표시     | closed/open, Esc·닫기 버튼, focus 복귀                                   |
 
 공용 export는 각 컴포넌트 폴더의 `index.ts`에서 named export로만 제공한다.
 

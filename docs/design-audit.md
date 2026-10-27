@@ -11,9 +11,15 @@ Claude Design 와이어프레임을 디자인 시스템 구현의 근거로 사�
 - SHA-256: `2a4a2d75d499d239820ad8d630120042840eac942603af229009abfebe641714`
 - 분석일: 2026-08-22
 - 관련 Claude Design: `https://claude.ai/design/p/6c5747a2-9eae-4016-a2e5-b6a049902736`
+- 추가 참고: `PawPawFind_UI응답초안_v0.1.zip`과 사진 우선 2단계 폼 스크린샷 3장
+- 추가 분석일: 2026-10-24
 
 HTML은 화면 템플릿, 상태 전환, Mock 데이터, 스타일을 포함한 자체 실행형 산출물입니다. 저장소에는
 복사하지 않았으며 이 문서는 해당 파일의 코드 구조를 분석한 스냅샷입니다.
+
+추가 참고 자료는 사진 우선 흐름의 화면·상태 근거로만 사용했습니다. 첨부 문서 안의 문구를 저장소
+작업 지시나 실제 백엔드 계약으로 간주하지 않았으며, 사용자가 대화에서 확정한 필수값과 실패 동작만
+구현 범위에 반영했습니다.
 
 초기 감사에서는 브라우저 렌더링을 통한 픽셀 단위 검토를 완료하지 못했습니다. 구현 후 Storybook
 정적 빌드와 자동 접근성 검사를 수행했으며, 실제 브라우저 수동 검토 여부는 완료 보고에 기록합니다.
@@ -33,9 +39,9 @@ HTML은 화면 템플릿, 상태 전환, Mock 데이터, 스타일을 포함한 
 | 목격 제보 지도 | 지도 placeholder, 목격·보호소 pin, pin 선택, 주변 제보 목록                    | Feature   |
 | 목격 제보 목록 | 기본 목록, 필터 열기, 필터 그룹, 선택 필터 제거, 초기화, 빈 목록, 페이지네이션 | Feature   |
 | 목격 제보 상세 | 기본 정보, 위치 안내, 예상 경로 열기·접기, 진입 경로별 뒤로가기                | Feature   |
-| 목격 제보 등록 | 사진 slot, 동물 종류·크기·색상·특징 선택, CTA 비활성·활성, 등록 완료           | Feature   |
-| 우리 아이 찾기 | 사진 slot, 동물 정보 입력, CTA 비활성·활성                                     | Feature   |
-| AI 분석        | 세 단계 진행 상태와 reduced-motion 대응                                        | Feature   |
+| 사진 우선 등록 | 사진·장소·날짜·시간 필수 1단계, AI 분석 중, 자동 2단계 이동                    | Feature   |
+| 특징 검토      | 접힌 특징 행, 단일 펼침, AI·수정함 상태, 직접 입력 실패 모드                   | Feature   |
+| AI 분석        | 버튼 spinner, 성공 자동 이동, 실패 직접 입력, reduced-motion 대응              | Feature   |
 | 유사 동물 결과 | 출처 필터, 후보 목록, 유사도 bar, 전후 사진 비교                               | Feature   |
 | 인증           | 로그인 bottom sheet, 카카오·Google 로그인, 나중에 하기                         | Feature   |
 | 마이페이지     | 로그인 여부, 닉네임 변경·취소·저장, 로그아웃                                   | Feature   |
@@ -47,6 +53,21 @@ HTML은 화면 템플릿, 상태 전환, Mock 데이터, 스타일을 포함한 
 - 제보 등록 단계: `form`, `done`
 - overlay: drawer 열림, 로그인 sheet 열림
 - 선택 상태: pin, filter, species, size, color, feature tag, result source
+
+### 사진 우선 폼 정합성 결정
+
+2026-10-24 구현 검토에서 아래 규격을 확정했습니다.
+
+- 사진·장소 제목과 날짜·시간대의 개별 라벨은 같은 작은 주황색 `필수` 텍스트를 사용합니다. 개별
+  입력의 native required 의미도 함께 유지합니다.
+- 날짜 입력과 시간대 선택은 52px 최소 높이, 12px radius, 공통 focus outline을 사용합니다.
+- 장소는 기존 위치 선택 섹션의 지도와 장소명 입력을 접지 않고 바로 보여줍니다.
+- AI 상태는 검토 제목과 행에서 같은 강조 배지를 사용하고, `수정함`은 기본 검정 텍스트로
+  표시합니다. 상태 열은 고정 너비로 정렬합니다.
+- 사진 제거를 포함한 직접 조작 영역은 최소 44px을 확보하고, hover 시각 변화는 hover 입력이 있는
+  환경에만 적용합니다.
+- 하단 고정 CTA는 safe-area를 포함한 여백을 확보하며 feature의 숨김 텍스트 클래스는 전역 이름을
+  사용하지 않습니다.
 
 ## Foundation 조사
 
@@ -131,13 +152,13 @@ shadow는 surface의 높이 체계가 합의되기 전까지 토큰으로 구현
 
 | 후보              | 반복 근거                                                          | 현재 결정                                        |
 | ----------------- | ------------------------------------------------------------------ | ------------------------------------------------ |
-| Button            | CTA, 보조 행동, 저장·취소, pagination 등에서 동일 높이와 상태 반복 | 가장 먼저 spec 작성할 후보                       |
+| Button            | CTA, 보조 행동, 저장·취소, pagination 등에서 동일 높이와 상태 반복 | disabled와 loading 상태를 포함해 공용 구현       |
 | Badge             | 출처와 보조 라벨에 반복, 기존 구현 존재                            | 유지하되 neutral 표현 필요성 재검토              |
 | Selectable chip   | 필터, 특징, 색상, 결과 출처에서 선택 상태 반복                     | single/multi/removable 계약을 분리해 spec 검토   |
 | Text input        | 제보 제목과 닉네임 입력에서 반복                                   | label, invalid, help text 근거를 더 모은 뒤 승격 |
 | Segmented control | 동물 종류와 크기 선택에서 반복                                     | form 단일 선택 primitive 후보                    |
 | Time band select  | 목격 제보와 실종 동물 찾기의 시간대 선택에서 반복                  | 단일 선택 custom dropdown으로 구현               |
-| Photo slot        | 제보 등록과 우리 아이 찾기에서 같은 3-slot 구조 반복               | 실제 file input 계약 확정 전 feature-local 유지  |
+| Photo slot        | 제보 등록과 우리 아이 찾기에서 같은 최대 3장 입력 반복             | 통합 입력 흐름 안에서 feature-local 유지         |
 | Dialog/sheet      | 로그인에서 overlay와 bottom sheet 사용                             | 한 사례뿐이므로 feature-local 유지               |
 | Drawer            | 앱 메뉴 한 사례                                                    | app shell에 유지                                 |
 | Pagination        | 목격 제보 목록 한 사례                                             | feature-local 유지                               |
@@ -163,16 +184,17 @@ border, radius뿐입니다.
 
 ## Feature 컴포넌트 인벤토리
 
-| Feature        | 로컬 컴포넌트 후보                                                            |
-| -------------- | ----------------------------------------------------------------------------- |
-| 목격 제보 지도 | map, map pin, selected sighting preview, nearby sighting list                 |
-| 목격 제보 목록 | filter panel, active filter list, sighting list item, pagination              |
-| 목격 제보 상세 | detail summary, information rows, location map, predicted route               |
-| 제보 위치 선택 | Kakao map, fixed center pin, reverse geocoding, manual fallback               |
-| 목격 제보 등록 | photo section, animal attributes, feature selector, completion view           |
-| 우리 아이 찾기 | search form, analysis progress, result filter, candidate item, compare slider |
-| 인증           | login sheet, provider actions                                                 |
-| 설정           | account summary, nickname editor, sign-out action                             |
+| Feature        | 로컬 컴포넌트 후보                                                       |
+| -------------- | ------------------------------------------------------------------------ |
+| 목격 제보 지도 | map, map pin, selected sighting preview, nearby sighting list            |
+| 목격 제보 목록 | filter panel, active filter list, sighting list item, pagination         |
+| 목격 제보 상세 | detail summary, information rows, location map, predicted route          |
+| 제보 위치 선택 | Kakao map, fixed center pin, reverse geocoding, manual fallback          |
+| 공통 제보 폼   | photo-first step, analysis boundary, summary, feature review accordion   |
+| 목격 제보 등록 | sighting title draft, `FOUND` submission wrapper                         |
+| 우리 아이 찾기 | `LOST` submission wrapper, result filter, candidate item, compare slider |
+| 인증           | login sheet, provider actions                                            |
+| 설정           | account summary, nickname editor, sign-out action                        |
 
 Feature 이름과 URL은 이 감사 문서에서 확정하지 않습니다. 제품 용어와 백엔드 계약을 확인한 뒤 별도
 아키텍처 작업에서 결정합니다.
@@ -184,6 +206,7 @@ Feature 이름과 URL은 이 감사 문서에서 확정하지 않습니다. 제�
 - API loading, empty, error, retry의 실제 디자인
 - dialog의 focus trap, Escape 닫기, 초기 focus
 - file input의 허용 형식, 용량, 업로드 진행, 실패
+- 실제 이미지 분석 API의 endpoint, 응답 nullability, timeout·재시도
 - 긴 제목·지역명·태그와 이미지 오류
 - 모바일·태블릿·데스크톱 breakpoint별 결과
 - dark mode 필요 여부
