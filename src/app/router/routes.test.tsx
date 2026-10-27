@@ -104,9 +104,7 @@ describe('appRoutes', () => {
 
   it('목격 제보 입력 폼을 공개 경로로 렌더링한다', () => {
     renderRoute('/sightings/new')
-    expect(
-      screen.getByRole('heading', { name: '목격한 동물의 사진을 올려주세요' }),
-    ).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: '발견한 동물을 알려주세요' })).toBeInTheDocument()
     expect(screen.queryByRole('link', { name: '이전으로' })).not.toBeInTheDocument()
     expect(
       within(screen.getByRole('navigation', { name: '주요 메뉴' })).getByRole('link', {

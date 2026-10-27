@@ -46,6 +46,15 @@ export const Disabled = {
   },
 } satisfies Story
 
+export const Loading = {
+  args: {
+    children: '다음',
+    loading: true,
+    loadingLabel: '이미지 AI 분석 중',
+    size: 'large',
+  },
+} satisfies Story
+
 export const LongLabel = {
   args: {
     children: '등록한 사진과 정보를 바탕으로 비슷한 동물 찾아보기',

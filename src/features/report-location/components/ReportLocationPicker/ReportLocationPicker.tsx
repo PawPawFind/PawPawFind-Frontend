@@ -24,6 +24,7 @@ interface ReportLocationPickerProps {
   onValueChange: (value: ReportLocationValue) => void
   appKey?: string
   className?: string
+  required?: boolean
 }
 
 type MapState = 'loading' | 'ready' | 'missing-key' | 'error'
@@ -67,6 +68,7 @@ export function ReportLocationPicker({
   description,
   heading,
   onValueChange,
+  required = false,
   value,
 }: ReportLocationPickerProps) {
   const resolvedAppKey = appKey ?? import.meta.env.VITE_KAKAO_MAP_APP_KEY ?? ''
@@ -259,7 +261,10 @@ export function ReportLocationPicker({
   return (
     <section aria-labelledby={headingId} className={classes}>
       <div>
-        <h2 id={headingId}>{heading}</h2>
+        <h2 aria-label={required ? `${heading} 필수` : undefined} id={headingId}>
+          {heading}
+          {required && <em className="report-location-picker__required">필수</em>}
+        </h2>
         <p className="report-location-picker__help">{description}</p>
         <p
           aria-live="polite"

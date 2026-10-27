@@ -9,7 +9,8 @@ import {
 
 interface UseReportFormOptions {
   initialEventDate?: string
-  initialSize: AnimalSize
+  initialSize?: AnimalSize | null
+  initialSpecies?: Species | null
 }
 
 interface ToggleFeatureOptions {
@@ -19,12 +20,16 @@ interface ToggleFeatureOptions {
   selection: 'single' | 'multiple'
 }
 
-export function useReportForm({ initialEventDate = '', initialSize }: UseReportFormOptions) {
-  const [species, setSpecies] = useState<Species>('DOG')
-  const [size, setSize] = useState<AnimalSize>(initialSize)
+export function useReportForm({
+  initialEventDate = '',
+  initialSize = null,
+  initialSpecies = null,
+}: UseReportFormOptions = {}) {
+  const [species, setSpecies] = useState<Species | null>(initialSpecies)
+  const [size, setSize] = useState<AnimalSize | null>(initialSize)
   const [eventDate, setEventDate] = useState(initialEventDate)
   const [eventHour, setEventHour] = useState('')
-  const [happenPlace, setHappenPlace] = useState<string>(DEFAULT_REPORT_LOCATION.happenPlace)
+  const [happenPlace, setHappenPlace] = useState('')
   const [latitude, setLatitude] = useState<string>(DEFAULT_REPORT_LOCATION.latitude)
   const [longitude, setLongitude] = useState<string>(DEFAULT_REPORT_LOCATION.longitude)
   const [features, setFeatures] = useState<ReportFeatureInput[]>([])
@@ -70,10 +75,11 @@ export function useReportForm({ initialEventDate = '', initialSize }: UseReportF
 
   const parsedLatitude = Number(latitude)
   const parsedLongitude = Number(longitude)
-  const hasRequiredColor = features.some((feature) => feature.category === '털색')
   const hasValidHour =
-    eventHour === '' ||
-    (Number.isInteger(Number(eventHour)) && Number(eventHour) >= 0 && Number(eventHour) <= 23)
+    eventHour !== '' &&
+    Number.isInteger(Number(eventHour)) &&
+    Number(eventHour) >= 0 &&
+    Number(eventHour) <= 23
   const hasValidLatitude =
     latitude !== '' &&
     Number.isFinite(parsedLatitude) &&
@@ -88,20 +94,23 @@ export function useReportForm({ initialEventDate = '', initialSize }: UseReportF
   const isComplete =
     eventDate !== '' &&
     happenPlace.trim() !== '' &&
-    hasRequiredColor &&
     hasValidHour &&
     hasValidLatitude &&
     hasValidLongitude
 
-  const getRequestFields = (): ReportRequestFields => ({
-    species,
-    size,
-    eventDate,
-    eventHour: eventHour === '' ? null : Number(eventHour),
-    happenPlace: happenPlace.trim(),
-    latitude: parsedLatitude,
-    longitude: parsedLongitude,
-  })
+  const getRequestFields = (): ReportRequestFields => {
+    if (!species) throw new Error('동물 종류를 선택해 주세요.')
+
+    return {
+      species,
+      size,
+      eventDate,
+      eventHour: Number(eventHour),
+      happenPlace: happenPlace.trim(),
+      latitude: parsedLatitude,
+      longitude: parsedLongitude,
+    }
+  }
 
   return {
     eventDate,
@@ -115,6 +124,7 @@ export function useReportForm({ initialEventDate = '', initialSize }: UseReportF
     longitude,
     setEventDate,
     setEventHour,
+    setFeatures,
     setHappenPlace,
     setLatitude,
     setLongitude,

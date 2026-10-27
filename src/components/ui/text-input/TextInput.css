@@ -1,7 +1,4 @@
 .ds-text-input {
-  --text-input-focus-outline: 2px solid color-mix(in srgb, var(--color-accent) 55%, var(--color-bg));
-  --text-input-focus-outline-offset: 1px;
-
   display: grid;
   gap: var(--space-2);
   width: 100%;
@@ -13,7 +10,14 @@
   overflow-wrap: anywhere;
 }
 
-.ds-text-input__required,
+.ds-text-input__required {
+  margin-left: var(--space-2);
+  color: var(--color-accent-text);
+  font-size: var(--font-size-xs);
+  font-style: normal;
+  font-weight: var(--font-weight-semibold);
+}
+
 .ds-text-input__error {
   color: var(--color-danger);
 }
@@ -52,9 +56,10 @@
   color: var(--color-text-tertiary);
 }
 
+.ds-text-input__control:focus,
 .ds-text-input__control:focus-visible {
-  outline: var(--text-input-focus-outline);
-  outline-offset: var(--text-input-focus-outline-offset);
+  border-color: var(--color-accent);
+  outline: none;
 }
 
 .ds-text-input__control[aria-invalid='true'] {

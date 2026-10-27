@@ -11,6 +11,13 @@
   margin-top: 0;
 }
 
+.report-location-picker__required {
+  margin-left: var(--space-2);
+  color: var(--color-accent-text);
+  font-size: var(--font-size-xs);
+  font-style: normal;
+}
+
 .report-location-picker__help {
   margin-bottom: 0;
   color: var(--color-text-tertiary);

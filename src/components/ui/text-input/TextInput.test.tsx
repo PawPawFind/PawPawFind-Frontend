@@ -17,6 +17,14 @@ describe('TextInput', () => {
     expect(input).toHaveAttribute('maxlength', '30')
     expect(input).toBeRequired()
     expect(input.id).not.toBe('')
+    expect(screen.getByText('필수')).toBeInTheDocument()
+  })
+
+  it('상위 그룹에 필수 표시가 있으면 native required는 유지하고 표시만 숨긴다', () => {
+    render(<TextInput label="발견 날짜" required showRequiredIndicator={false} />)
+
+    expect(screen.getByRole('textbox', { name: '발견 날짜' })).toBeRequired()
+    expect(screen.queryByText('필수')).not.toBeInTheDocument()
   })
 
   it('사용자 지정 id와 help text를 연결한다', () => {

@@ -14,6 +14,9 @@ interface TimeBandSelectProps<Value extends string> {
   description?: string
   disabled?: boolean
   className?: string
+  placeholder?: string
+  required?: boolean
+  showRequiredIndicator?: boolean
 }
 
 function getWrappedIndex(index: number, length: number) {
@@ -27,6 +30,9 @@ export function TimeBandSelect<Value extends string>({
   label,
   onValueChange,
   options,
+  placeholder,
+  required = false,
+  showRequiredIndicator = true,
   value,
 }: TimeBandSelectProps<Value>) {
   const [isOpen, setIsOpen] = useState(false)
@@ -37,12 +43,15 @@ export function TimeBandSelect<Value extends string>({
   const optionRefs = useRef<(HTMLButtonElement | null)[]>([])
   const id = useId()
   const labelId = `${id}-label`
+  const requiredId = `${id}-required`
   const valueId = `${id}-value`
   const descriptionId = `${id}-description`
   const listboxId = `${id}-listbox`
   const selectedIndex = options.findIndex((option) => option.value === value)
   const selectedOption = selectedIndex >= 0 ? options[selectedIndex] : undefined
+  const visibleValue = selectedOption?.label ?? placeholder ?? ''
   const classes = ['ds-time-band-select', className].filter(Boolean).join(' ')
+  const labelledBy = [labelId, required ? requiredId : undefined, valueId].filter(Boolean).join(' ')
 
   const openMenu = (nextIndex = selectedIndex >= 0 ? selectedIndex : 0) => {
     if (disabled || options.length === 0) return
@@ -154,8 +163,20 @@ export function TimeBandSelect<Value extends string>({
   return (
     <div className={classes} ref={rootRef}>
       <div className="ds-time-band-select__heading">
-        <span className="ds-time-band-select__label" id={labelId}>
-          {label}
+        <span className="ds-time-band-select__label">
+          <span id={labelId}>{label}</span>
+          {required && (
+            <span
+              className={
+                showRequiredIndicator
+                  ? 'ds-time-band-select__required'
+                  : 'ds-time-band-select__required ds-time-band-select__required--visually-hidden'
+              }
+              id={requiredId}
+            >
+              필수
+            </span>
+          )}
         </span>
         {description && (
           <span className="ds-time-band-select__description" id={descriptionId}>
@@ -170,7 +191,7 @@ export function TimeBandSelect<Value extends string>({
           aria-describedby={description ? descriptionId : undefined}
           aria-expanded={isOpen}
           aria-haspopup="listbox"
-          aria-labelledby={`${labelId} ${valueId}`}
+          aria-labelledby={labelledBy}
           className="ds-time-band-select__trigger"
           data-open={isOpen || undefined}
           disabled={disabled}
@@ -179,17 +200,11 @@ export function TimeBandSelect<Value extends string>({
           ref={triggerRef}
           type="button"
         >
-          <svg
-            aria-hidden="true"
-            className="ds-time-band-select__clock"
-            fill="none"
-            viewBox="0 0 24 24"
+          <span
+            className={`ds-time-band-select__value${selectedOption ? '' : ' is-placeholder'}`}
+            id={valueId}
           >
-            <circle cx="12" cy="12" r="8.5" />
-            <path d="M12 7.6V12l3.2 2" />
-          </svg>
-          <span className="ds-time-band-select__value" id={valueId}>
-            {selectedOption?.label ?? ''}
+            {visibleValue}
           </span>
           <svg
             aria-hidden="true"

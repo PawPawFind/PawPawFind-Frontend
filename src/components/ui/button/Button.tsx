@@ -8,11 +8,16 @@ interface ButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'chi
   children: ReactNode
   variant?: ButtonVariant
   size?: ButtonSize
+  loading?: boolean
+  loadingLabel?: ReactNode
 }
 
 export function Button({
   children,
   className,
+  disabled,
+  loading = false,
+  loadingLabel,
   size = 'medium',
   type = 'button',
   variant = 'primary',
@@ -23,8 +28,15 @@ export function Button({
     .join(' ')
 
   return (
-    <button className={classes} type={type} {...buttonProps}>
-      {children}
+    <button
+      aria-busy={loading || undefined}
+      className={classes}
+      disabled={disabled || loading}
+      type={type}
+      {...buttonProps}
+    >
+      {loading && <span aria-hidden="true" className="ds-button__spinner" />}
+      <span>{loading ? (loadingLabel ?? children) : children}</span>
     </button>
   )
 }

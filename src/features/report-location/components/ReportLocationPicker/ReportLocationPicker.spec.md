@@ -21,6 +21,7 @@ interface ReportLocationPickerProps {
   onValueChange: (value: ReportLocationValue) => void
   appKey?: string
   className?: string
+  required?: boolean
 }
 ```
 
@@ -38,6 +39,7 @@ interface ReportLocationPickerProps {
 - 주소 조회가 실패하더라도 좌표는 보존하고 사용자가 장소명을 직접 입력할 수 있게 한다.
 - 장소명 입력은 좌표를 변경하지 않는다.
 - 유효한 좌표를 외부에서 전달하면 해당 위치를 초기 중심으로 사용한다.
+- `required`이면 제목 뒤에 별도 스타일의 `필수` 텍스트를 표시한다.
 
 ## 상태
 

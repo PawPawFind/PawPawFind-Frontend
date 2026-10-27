@@ -40,13 +40,14 @@ src/features/<feature>/
 `pages`는 router가 직접 렌더링하는 feature 진입점입니다. page 아래에서 같은 feature의 components,
 hooks, api를 조합하고 router 설정 자체는 알지 않습니다.
 
-목격 제보와 실종 동물 찾기는 데이터와 사용자 흐름이 다르므로 각각 `sighting-reports`와
-`missing-animal-search` feature로 분리합니다. `reports`처럼 두 도메인을 포괄할 수 있는 이름의
-feature는 만들지 않습니다.
+목격 제보와 실종 동물 찾기의 route·제출 결과는 각각 `sighting-reports`와
+`missing-animal-search` feature로 분리합니다. 두 화면에서 동일하게 사용하는 사진 우선 입력·분석·검토
+흐름만 `src/features/report-form`이 소유합니다. 이는 두 도메인을 포괄하는 범용 `reports` feature가
+아니라, 실제로 공유되는 입력 흐름에 한정된 경계입니다.
 
-두 feature가 실제로 공유하는 서버 코드값과 요청 필드 타입은 `src/types/report.ts`, 폼 상태 로직은
-`src/hooks/useReportForm.ts`에 둡니다. 페이지 제목, 문구, `FOUND`·`LOST` 결정과 제출 후 흐름은 각
-feature가 소유합니다.
+두 feature가 공유하는 서버 코드값과 요청 필드 타입은 `src/types/report.ts`, 폼 상태 로직은
+`src/hooks/useReportForm.ts`에 둡니다. `report-form`은 mode에 따라 화면 문구와 `FOUND`·`LOST`
+payload를 만들고, 각 page는 route에서 받은 제출 callback과 오류·진행 상태만 연결합니다.
 
 두 입력 feature가 공유하는 카카오 지도 SDK 로딩과 제보 위치 선택은 `src/features/report-location`에
 둡니다. 지도 제공사, 주소 변환과 제보 위치 계약을 아는 기능이므로 `src/components/ui` primitive로
@@ -113,9 +114,12 @@ Browser history 기반 URL을 사용하므로 배포 서버는 파일이 없는 
 
 - 목격 제보는 `reportType: 'FOUND'`와 필수 제목을 사용합니다.
 - 실종 동물 찾기는 `reportType: 'LOST'`를 사용하며 제목을 받지 않습니다.
-- 동물 종류와 크기는 각각 `DOG | CAT`, `SMALL | MEDIUM | LARGE` 서버 코드를 사용합니다.
-- 시간은 2시간 단위 구간으로 선택합니다. API가 `eventHour` 정수 하나를 받으므로 구간의 중간 시각
-  (`14–16시` → `15`)을 보내고, 시간을 모르면 `null`을 보냅니다.
+- 동물 종류는 `DOG | CAT` 서버 코드를 사용하며 2단계 제출의 최소 필수값입니다.
+- 크기는 `SMALL | MEDIUM | LARGE` 서버 코드를 사용하지만 사진 우선 UI에서는 사용자가 직접 고르는
+  선택값이므로 현재 mock 요청 타입에서 `null`을 허용합니다. 실제 API 연결 전에 nullable 여부를
+  백엔드 계약과 다시 동기화합니다.
+- 시간은 2시간 단위 구간으로 선택합니다. 사진 우선 1단계에서는 시간대를 필수로 받고, `eventHour`
+  정수 하나에 구간의 중간 시각(`14–16시` → `15`)을 담습니다.
 - 털색은 report 본문의 단일 color가 아니라 다른 특징과 함께 `{ category, keyword }`로 관리합니다.
 - 화면 label과 API 값은 분리합니다. 예를 들어 화면의 `털 길이`는 category `털길이`, 화면의
   `접힘`은 keyword `접힌 귀`로 변환합니다.
@@ -126,6 +130,17 @@ Browser history 기반 URL을 사용하므로 배포 서버는 파일이 없는 
   저장하지 않습니다.
 - SDK 키가 없거나 로딩에 실패하면 장소와 좌표를 직접 입력할 수 있으며, 지도 연동과 별개로 생성 API
   요청은 아직 연결하지 않습니다.
+
+### 사진 분석 mock 경계
+
+- `src/features/report-form/analysis`의 `ReportImageAnalyzer`가 사진 분석 경계입니다.
+- 현재 기본 구현은 지연·성공·실패를 재현하는 `mockReportImageAnalyzer`이며 네트워크 요청을 보내지
+  않습니다. 파일명에 `fail`이 포함된 테스트 사진은 분석 실패 상태를 재현합니다.
+- mock 성공 결과는 동물 종류, AI 특징, 품종 후보를 제안합니다. 품종 후보는 자동 선택하지 않습니다.
+- 크기·몸 상태·행동은 사용자 직접 입력으로 유지하고, 분석이 실패하면 동물 종류만 필수인 직접 입력
+  모드로 전환합니다.
+- 실제 분석 endpoint, 요청 형식, 응답 nullability와 오류 코드는 확정하지 않았습니다. 연결 시
+  `.claude/skills/backend-api-integration/SKILL.md`의 계약 동기화 절차를 따릅니다.
 
 ## 의존 방향
 

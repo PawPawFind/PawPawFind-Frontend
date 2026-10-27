@@ -13,11 +13,14 @@ interface TextInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   description?: React.ReactNode
   errorMessage?: React.ReactNode
   containerClassName?: string
+  showRequiredIndicator?: boolean
 }
 ```
 
 - native input 속성을 전달한다. `id`가 없으면 `useId`로 만든다.
 - native `disabled`, `required`, controlled/uncontrolled 입력을 그대로 지원한다.
+- `required`이면 작은 주황색 `필수` 텍스트를 표시한다. 상위 그룹에서 이미 필수 여부를 표시한
+  경우 `showRequiredIndicator=false`로 시각 표시만 숨기며 native required 의미는 유지한다.
 
 ## 상태
 
@@ -31,8 +34,8 @@ interface TextInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
 - `label[for]`와 `input[id]`를 연결한다.
 - 설명과 오류는 `aria-describedby`로 연결하며 오류가 있으면 `aria-invalid=true`를 전달한다.
 - native text input의 키보드와 focus 동작을 유지한다.
-- `focus-visible`에는 기본 3px 전역 outline보다 얇은 2px outline을 사용하고, accent와 배경을
-  섞은 연한 색으로 입력 위치를 표시한다.
+- focus 상태에서는 검정 전역 outline 대신 accent border를 사용해 다른 폼 입력과 같은 선택 상태를
+  표시한다.
 
 ## 반응형과 범위 밖
 

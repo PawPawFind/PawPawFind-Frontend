@@ -53,4 +53,22 @@ describe('Button', () => {
     expect(button).toHaveClass('ds-button--large')
     expect(handleClick).not.toHaveBeenCalled()
   })
+
+  it('loading 상태에서는 진행 문구를 보여주고 중복 click을 막는다', async () => {
+    const handleClick = vi.fn()
+    const user = userEvent.setup()
+
+    render(
+      <Button loading loadingLabel="이미지 AI 분석 중" onClick={handleClick}>
+        다음
+      </Button>,
+    )
+
+    const button = screen.getByRole('button', { name: '이미지 AI 분석 중' })
+    await user.click(button)
+
+    expect(button).toBeDisabled()
+    expect(button).toHaveAttribute('aria-busy', 'true')
+    expect(handleClick).not.toHaveBeenCalled()
+  })
 })

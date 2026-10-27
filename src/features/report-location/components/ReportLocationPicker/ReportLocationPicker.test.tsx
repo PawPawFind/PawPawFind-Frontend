@@ -35,6 +35,7 @@ function Example({ appKey = '' }: { appKey?: string }) {
         description="지도를 움직여 위치를 선택해주세요."
         heading="발견 장소"
         onValueChange={setValue}
+        required
         value={value}
       />
       <output data-testid="location-value">{JSON.stringify(value)}</output>
@@ -61,6 +62,8 @@ describe('ReportLocationPicker', () => {
     render(<Example />)
 
     expect(loadKakaoMaps).not.toHaveBeenCalled()
+    expect(screen.getByRole('heading', { name: '발견 장소 필수' })).toBeInTheDocument()
+    expect(screen.getByText('필수')).toHaveClass('report-location-picker__required')
     const mapRegion = screen.getByRole('region', { name: '발견 장소 지도' })
     const mapStatus = screen.getByText(/카카오맵 키를 설정하면/)
 
