@@ -60,6 +60,15 @@ export const Default = {
   render: () => <TimeBandSelectExample />,
 } satisfies Story
 
+export const RequiredEmpty = {
+  args: {
+    options: options.filter((option) => option.value !== ''),
+    placeholder: '시간대를 선택해 주세요',
+    required: true,
+    value: '',
+  },
+} satisfies Story
+
 export const Open = {
   render: () => <TimeBandSelectExample />,
   play: async ({ canvasElement }) => {

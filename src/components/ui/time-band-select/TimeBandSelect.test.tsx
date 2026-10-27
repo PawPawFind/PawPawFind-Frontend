@@ -29,6 +29,43 @@ describe('TimeBandSelect', () => {
     expect(trigger).toHaveAccessibleDescription('정확한 시각이 아니어도 괜찮아요.')
   })
 
+  it('선택 전 placeholder와 required 상태를 접근 가능한 이름에 포함한다', () => {
+    render(
+      <TimeBandSelect
+        label="발견 시간대"
+        onValueChange={vi.fn()}
+        options={options.filter((option) => option.value !== '')}
+        placeholder="시간대를 선택해 주세요"
+        required
+        value=""
+      />,
+    )
+
+    expect(
+      screen.getByRole('button', { name: '발견 시간대 필수 시간대를 선택해 주세요' }),
+    ).toBeInTheDocument()
+    expect(screen.getByText('필수')).toBeVisible()
+  })
+
+  it('필수 표시를 숨겨도 접근 가능한 이름에는 필수 상태를 유지한다', () => {
+    render(
+      <TimeBandSelect
+        label="발견 시간대"
+        onValueChange={vi.fn()}
+        options={options.filter((option) => option.value !== '')}
+        placeholder="시간대를 선택해 주세요"
+        required
+        showRequiredIndicator={false}
+        value=""
+      />,
+    )
+
+    expect(
+      screen.getByRole('button', { name: '발견 시간대 필수 시간대를 선택해 주세요' }),
+    ).toBeInTheDocument()
+    expect(screen.getByText('필수')).toHaveClass('ds-time-band-select__required--visually-hidden')
+  })
+
   it('option을 선택하면 controlled value를 바꾸고 menu를 닫는다', async () => {
     const user = userEvent.setup()
 

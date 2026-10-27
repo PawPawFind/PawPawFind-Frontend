@@ -11,6 +11,8 @@ interface ButtonProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>
   children: React.ReactNode
   variant?: 'primary' | 'secondary'
   size?: 'medium' | 'large'
+  loading?: boolean
+  loadingLabel?: React.ReactNode
 }
 ```
 
@@ -18,14 +20,16 @@ interface ButtonProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>
 - `size`의 기본값은 `medium`이다.
 - native `button` 속성을 그대로 전달한다.
 - `type`의 기본값은 `button`이며, 폼 제출이 필요하면 사용처에서 `submit`을 명시한다.
+- `loading`이면 native `disabled`와 `aria-busy`를 적용하고 spinner를 표시한다.
+- `loadingLabel`은 비동기 작업 중 표시할 문구이며 생략하면 기존 `children`을 유지한다.
 
 ## 상태
 
 - [x] default
-- [x] hover
+- [x] hover: hover 입력을 지원하는 환경에서만 표시
 - [x] focus-visible
 - [x] disabled
-- [ ] loading: 비동기 중 버튼 문구와 상태 디자인이 확정된 뒤 추가한다.
+- [x] loading: spinner와 전달받은 문구를 표시하고 중복 실행을 차단한다.
 - [ ] icon-only: 텍스트 버튼과 접근성 계약이 다르므로 이 컴포넌트에서 지원하지 않는다.
 
 ## 접근성
@@ -35,6 +39,7 @@ interface ButtonProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>
 - keyboard: native 버튼의 Enter와 Space 동작을 유지한다.
 - focus-visible: 키보드 포커스를 명확한 outline으로 표시한다.
 - disabled: native `disabled` 속성으로 클릭과 포커스를 차단한다.
+- loading: `aria-busy=true`와 native `disabled`로 진행 상태와 중복 실행 방지를 함께 제공한다.
 
 ## 반응형
 
@@ -45,7 +50,7 @@ interface ButtonProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>
 
 - API 요청, 라우팅, analytics
 - 제품별 문구
-- loading spinner와 icon-only 버튼
+- icon-only 버튼
 - 링크 역할
 
 ## 참고

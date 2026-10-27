@@ -9,6 +9,23 @@
   line-height: var(--line-height-compact);
   text-align: center;
   cursor: pointer;
+  gap: var(--space-2);
+}
+
+.ds-button__spinner {
+  width: 1em;
+  height: 1em;
+  flex: none;
+  border: 2px solid currentcolor;
+  border-right-color: transparent;
+  border-radius: var(--radius-full);
+  animation: ds-button-spin 700ms linear infinite;
+}
+
+@keyframes ds-button-spin {
+  to {
+    transform: rotate(1turn);
+  }
 }
 
 .ds-button--medium {
@@ -28,18 +45,20 @@
   color: var(--color-on-accent);
 }
 
-.ds-button--primary:hover:not(:disabled) {
-  background: #e08c05;
-}
-
 .ds-button--secondary {
   border-color: var(--color-border);
   background: var(--color-bg);
   color: var(--color-text-primary);
 }
 
-.ds-button--secondary:hover:not(:disabled) {
-  background: var(--color-surface);
+@media (hover: hover) {
+  .ds-button--primary:hover:not(:disabled) {
+    background: #e08c05;
+  }
+
+  .ds-button--secondary:hover:not(:disabled) {
+    background: var(--color-surface);
+  }
 }
 
 .ds-button:focus-visible {
@@ -52,4 +71,10 @@
   background: var(--color-border);
   color: var(--color-disabled);
   cursor: not-allowed;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ds-button__spinner {
+    animation: none;
+  }
 }

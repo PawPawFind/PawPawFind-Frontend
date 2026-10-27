@@ -6,6 +6,7 @@ interface TextInputProps extends InputHTMLAttributes<HTMLInputElement> {
   description?: ReactNode
   errorMessage?: ReactNode
   containerClassName?: string
+  showRequiredIndicator?: boolean
 }
 
 export function TextInput({
@@ -18,6 +19,7 @@ export function TextInput({
   id,
   label,
   required,
+  showRequiredIndicator = true,
   ...inputProps
 }: TextInputProps) {
   const generatedId = useId()
@@ -33,10 +35,9 @@ export function TextInput({
     <div className={containerClasses}>
       <label className="ds-text-input__label" htmlFor={inputId}>
         {label}
-        {required && (
+        {required && showRequiredIndicator && (
           <span aria-hidden="true" className="ds-text-input__required">
-            {' '}
-            *
+            필수
           </span>
         )}
       </label>

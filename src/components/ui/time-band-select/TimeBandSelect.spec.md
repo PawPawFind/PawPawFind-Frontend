@@ -21,6 +21,9 @@ interface TimeBandSelectProps<Value extends string> {
   description?: string
   disabled?: boolean
   className?: string
+  placeholder?: string
+  required?: boolean
+  showRequiredIndicator?: boolean
 }
 ```
 
@@ -28,6 +31,7 @@ interface TimeBandSelectProps<Value extends string> {
 
 - closed / open
 - selected option
+- placeholder / required
 - focus-visible
 - disabled
 - 긴 label과 option 문구
@@ -46,6 +50,8 @@ interface TimeBandSelectProps<Value extends string> {
 - trigger는 native `button` 요소와 `aria-haspopup="listbox"`, `aria-expanded`를 사용한다.
 - menu는 `listbox`, 각 항목은 `option`으로 노출한다.
 - 보이는 label과 trigger, description을 `aria-labelledby`·`aria-describedby`로 연결한다.
+- `required`이면 label의 접근 가능한 이름에 `필수`를 포함한다. 상위 그룹에서 시각 표시를
+  제공하면 `showRequiredIndicator=false`로 화면에서만 숨길 수 있다.
 - 선택 항목은 `aria-selected="true"`로 전달한다.
 
 ## Keyboard·focus
@@ -55,12 +61,15 @@ interface TimeBandSelectProps<Value extends string> {
 - menu에서 `ArrowDown`, `ArrowUp`, `Home`, `End`로 항목을 이동한다.
 - `Enter`, `Space`로 선택하고 trigger로 focus를 복귀한다.
 - `Escape`는 선택을 바꾸지 않고 닫으며, 외부 click과 `Tab`도 menu를 닫는다.
-- trigger·option에 `focus-visible` 표시를 제공한다.
+- trigger는 TextInput과 같은 accent border focus를 사용하고 option은 전역 `focus-visible` outline을
+  사용한다.
 - menu가 열릴 때 페이지를 자동 스크롤하지 않고 menu 내부에서만 선택 항목을 노출한다.
 
 ## 반응형
 
 - 사용처의 너비를 따라 `width: 100%`로 늘어난다.
+- trigger는 다른 큰 입력과 같은 52px 최소 높이, 12px radius와 accent focus border를 사용한다.
+- 별도 시계 아이콘은 표시하지 않고 펼침 상태를 나타내는 caret만 가장 오른쪽에 둔다.
 - menu는 일반 높이 option을 최대 3개까지 노출하고, 나머지 option은 menu 내부에서 세로
   스크롤해 확인한다.
 - 긴 선택 문구는 trigger와 menu에서 줄바꿈하며, 내용이 잘리지 않도록 실제 노출 개수는 3개보다

@@ -25,7 +25,7 @@ interface SelectableChipProps extends Omit<
 
 - [x] unselected: 기본 surface, border, secondary text
 - [x] selected: accent border, accent-soft surface, primary text와 semibold 강조
-- [x] hover
+- [x] hover: hover 입력을 지원하는 환경에서만 표시
 - [x] focus-visible
 - [x] disabled
 - [ ] removable: 선택 상태 토글과 삭제 동작을 하나의 API에 섞지 않는다.

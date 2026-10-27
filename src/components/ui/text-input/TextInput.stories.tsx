@@ -20,6 +20,7 @@ type Story = StoryObj<typeof meta>
 
 export const Default = {} satisfies Story
 export const Filled = { args: { defaultValue: '연남동 갈색 강아지를 목격했어요' } } satisfies Story
+export const Required = { args: { required: true } } satisfies Story
 export const Disabled = {
   args: { disabled: true, defaultValue: '수정할 수 없는 닉네임' },
 } satisfies Story

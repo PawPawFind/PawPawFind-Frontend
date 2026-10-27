@@ -14,10 +14,6 @@
   cursor: pointer;
 }
 
-.ds-selectable-chip:hover:not(:disabled):not([aria-pressed='true']) {
-  background: var(--color-surface);
-}
-
 .ds-selectable-chip[aria-pressed='true'] {
   border-color: var(--color-accent);
   background: var(--color-accent-soft);
@@ -25,9 +21,15 @@
   font-weight: var(--font-weight-semibold);
 }
 
-.ds-selectable-chip[aria-pressed='true']:hover:not(:disabled) {
-  border-color: #e08c05;
-  background: var(--color-accent-soft);
+@media (hover: hover) {
+  .ds-selectable-chip:hover:not(:disabled):not([aria-pressed='true']) {
+    background: var(--color-surface);
+  }
+
+  .ds-selectable-chip[aria-pressed='true']:hover:not(:disabled) {
+    border-color: #e08c05;
+    background: var(--color-accent-soft);
+  }
 }
 
 .ds-selectable-chip:focus-visible {
