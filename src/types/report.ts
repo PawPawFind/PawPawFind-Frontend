@@ -3,7 +3,7 @@ import type { AnimalSize, Species } from './domain'
 export type ReportType = 'LOST' | 'FOUND'
 
 export type ReportFeatureCategory =
-  '털색' | '털길이' | '귀' | '꼬리' | '눈/얼굴' | '착용 중' | '몸 상태' | '행동'
+  '털색' | '무늬' | '털길이' | '귀' | '꼬리' | '눈/얼굴' | '착용 중' | '몸 상태' | '행동' | '품종'
 
 export interface ReportFeatureInput {
   category: ReportFeatureCategory
@@ -17,7 +17,8 @@ export interface ReportPhotoDraft {
 
 export interface ReportRequestFields {
   species: Species
-  size: AnimalSize
+  /** mock UI 계약. 실제 API 연결 전에 nullable 지원 여부를 동기화한다. */
+  size: AnimalSize | null
   eventDate: string
   eventHour: number | null
   happenPlace: string
@@ -110,6 +111,19 @@ export const REPORT_FEATURE_GROUPS = [
       { label: '검정', keyword: '검정', swatch: '#2a2724' },
     ],
     required: true,
+  },
+  {
+    category: '무늬',
+    label: '무늬',
+    maxSelections: null,
+    selection: 'multiple',
+    options: [
+      { label: '얼룩무늬', keyword: '얼룩무늬' },
+      { label: '줄무늬', keyword: '줄무늬' },
+      { label: '삼색', keyword: '삼색' },
+      { label: '턱시도', keyword: '턱시도' },
+    ],
+    required: false,
   },
   {
     category: '털길이',
