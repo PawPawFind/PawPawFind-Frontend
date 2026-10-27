@@ -19,18 +19,15 @@ export const StepTwo = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
 
-    await userEvent.type(
-      canvas.getByRole('textbox', { name: /제목/ }),
-      '연남동 골목에서 갈색 중형견 봤어요',
-    )
     await userEvent.upload(
-      canvas.getByLabelText('목격 사진 선택'),
+      canvas.getByLabelText('목격 제보 사진 선택'),
       new File(['sighting-photo'], 'sighting-story.jpg', { type: 'image/jpeg' }),
     )
-    const eventDateInput = canvas.getByLabelText(/^발견 날짜\s*\*$/)
-    await userEvent.clear(eventDateInput)
-    await userEvent.type(eventDateInput, '2026-08-23')
-    await userEvent.click(canvas.getByRole('button', { name: '갈색' }))
-    await userEvent.click(canvas.getByRole('button', { name: '다음 · 특징 고르기' }))
+    await userEvent.click(canvas.getByRole('button', { name: '장소명 입력 열기' }))
+    await userEvent.type(canvas.getByRole('textbox', { name: /장소명 또는 주소/ }), '연남동')
+    await userEvent.click(canvas.getByRole('button', { name: /발견 시간대/ }))
+    await userEvent.click(canvas.getByRole('option', { name: '14–16시' }))
+    await userEvent.click(canvas.getByRole('button', { name: '다음' }))
+    await canvas.findByRole('heading', { name: '사진을 보고 특징을 채웠어요' })
   },
 } satisfies Story
